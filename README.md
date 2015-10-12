@@ -8,6 +8,8 @@ FIT也支持SSH、SFTP、SNMP、JDBC、CMD等，同时支持扩展。
 * 数据驱动：测试用例设置为展开执行时，一个用例相当于多个。 
 * 异步执行：用例设置为异步执行后，直到真正依赖此用例时，才会去检查并等待用例的执行结果 
 
+----------------------------------
+
 FIT mainly for interface testing, such as: REST, SOAP.  
 FIT also supports SSH, SFTP, SNMP, JDBC, CMD, etc., and support the expansion.  
  
