@@ -67,7 +67,7 @@ public class MStep
 		else
 		{
 			String par[] = para.split("=", 2);
-			optParas.add(new Parameter(StringUtil.trim(par[0])).setValue(StringUtil.trim(par[1])));
+			optParas.add(new Parameter(StringUtil.trim(par[0])).setValue(par[1]));
 		}
 	}
 	

@@ -64,7 +64,7 @@ public class DBFunc implements IFuncCall{
 		{
 			dbq[3] = expend(args[1], table);
 			String [] dbargs = readFuncParam(expend(args[0], table));
-			if (dbargs.length != 3) throw new DataInvalidException("Func[sql] DBconn needs 3 args.");
+			if (dbargs.length != 3) throw new DataInvalidException("Func[sql] DBconn needs 3 args: " + dbargs.length);
 			for (int i = 0; i < 3; i++)
 			{
 				dbq[i] = dbargs[i];

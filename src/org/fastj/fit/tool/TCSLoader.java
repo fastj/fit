@@ -186,7 +186,7 @@ public class TCSLoader {
 		if ((idx = line.indexOf('=')) > 0)
 		{
 			String name = StringUtil.trim(line.substring(0, idx));
-			String value = StringUtil.trim(line.substring(idx + 1));
+			String value = line.substring(idx + 1).trim();
 			if ("title".equals(name))
 			{
 				if (tcase == null) throw new DataInvalidException("Cannot set testcase property in AW scripts.");
@@ -355,7 +355,7 @@ public class TCSLoader {
 				{
 					String name = StringUtil.trim(line.substring(0, idx));
 					name = name.startsWith("sys.para.") ? name.substring(9) : name;
-					table.add(name, StringUtil.trim(line.substring(idx + 1)));
+					table.add(name, line.substring(idx + 1).trim());
 				}
 			}
 		} catch (Exception e) {

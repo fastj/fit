@@ -474,12 +474,12 @@ public final class TRun {
 		{
 			if (pstr.contains("=")){
 				String pv[] = pstr.split("=", 2);
-				currPTable.add(trim(pv[0]), trim(pv[1]));
+				currPTable.add(trim(pv[0]), pv[1]);
 			}
 			else
 			{
 				String pname = mstep.getParamName(idx);
-				currPTable.add(pname, trim(pstr));
+				currPTable.add(pname, pstr);
 			}
 			
 			idx++;
