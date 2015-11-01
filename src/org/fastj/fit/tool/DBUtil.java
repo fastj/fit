@@ -168,7 +168,7 @@ public class DBUtil {
 		if (clazz == null) throw new Exception("Unkown DB: " + dburl);
 		
 		Class<?> c = Class.forName(clazz);
-		System.out.println(c);
+		
 		DriverManager.registerDriver((Driver)c.newInstance());
 	}
 	
