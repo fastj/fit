@@ -1,0 +1,1 @@
+{"A":{"@uri":"dd","B":{"value":"b"},"C":{"value":"c"},"E":{"@uri":"ee","value":"e"},"L":{"DD":[{"value":"ds1"},{"value":"ds2"}],"D":[{"value":"d1"},{"value":"d2"}],"F":{"FF":[{"value":"vv"},{"value":"vv2"}],"@iro":"dd"},"DS":[{"D1":{"value":"ds1"},"D2":{"value":"ds2"}},{"D4":{"value":"ds2"},"D3":{"value":"ds1"}}]}}}
