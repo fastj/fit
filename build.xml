@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="pack" name="fit">
+	
+	<property name="src.dir" value="src" />
+	<property name="classes.dir" value="classes" />
+	<property name="lib.dir" value="lib" />
+	<property name="dist.dir" value="dist" />
+	<property name="jarname" value="fit.jar" />
+	
+	<path id="lib">
+		<fileset file="${lib.dir}/*.jar" />
+		<pathelement path="${classes.dir}" />
+	</path>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+	</target>
+
+	<target name="clean">
+	    <delete dir="${dist.dir}"/>
+		<delete dir="${classes.dir}"/>
+	</target>
+	
+	<target name="compile" depends="init" description="compile the source files">
+		<javac debug="true" destdir="${classes.dir}" includeantruntime="false" source="1.8" target="1.8">
+		    <src path="src"/>
+		    <classpath refid="lib"/>
+		</javac>
+	</target>
+
+
+	<target name="pack" depends="compile" description="make .jar file">
+		<mkdir dir="${classes.dir}/lib"/>
+		<mkdir dir="${classes.dir}/extlib"/>
+		<mkdir dir="${classes.dir}/plugins"/>
+		
+		<copy todir="${classes.dir}/lib">
+		      <fileset dir="${lib.dir}">
+		        <include name="jackson-annotations-2.5.4.jar"/>
+		      	<include name="jackson-core-2.5.4.jar"/>
+		        <include name="jackson-databind-2.5.4.jar"/>
+		      	<include name="jdom.jar"/>
+		      </fileset>
+		</copy>
+		
+		<jar destfile="${dist.dir}/${jarname}" basedir="${classes.dir}">
+			<exclude name="**/*Test.*" />
+			<manifest>
+				<attribute name ="Main-Class"  value ="org.fastj.fit.runner.RunMain"/> 
+			</manifest>
+		</jar>
+		
+		<!-- build all in one jar -->
+		<!-- copy todir="${classes.dir}/extlib">
+					<fileset dir="${lib.dir}/../../FitPlug/lib">
+						<include name="httpclient-4.3.5.jar"/>
+						<include name="httpcore-4.3.2.jar"/>
+						<include name="httpmime-4.3.5.jar"/>
+						<include name="jsch-0.1.50.jar"/>
+						<include name="net-0.0.1-SNAPSHOT.jar"/>
+						<include name="org.apache.commons.logging_1.1.1.v201101211721.jar"/>
+						<include name="snmp4j-2.2.2.jar"/>
+					</fileset>
+		</copy>
+		<copy todir="${classes.dir}/plugins">
+			<fileset dir="${lib.dir}/../../FitPlug/dist">
+				<include name="fit-ext-default.jar"/>
+			</fileset>
+		</copy>
+		<jar destfile="${dist.dir}/${allJarname}" basedir="${classes.dir}">
+			<exclude name="**/*Test.*" />
+			<manifest>
+				<attribute name ="Main-Class"  value ="org.fastj.fit.runner.RunMain"/> 
+			</manifest>
+		</jar -->
+		
+	</target>
+
+</project>
