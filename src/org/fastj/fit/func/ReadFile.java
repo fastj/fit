@@ -46,7 +46,7 @@ public class ReadFile implements IFunction{
 		
 		if (args == null || args.length == 0)
 		{
-			throw new DataInvalidException("Func [read_txt] needs a file.");
+			throw new DataInvalidException("Func [read_txt] requires a file.");
 		}
 		
 		String path = trim(expend(args[0], table));

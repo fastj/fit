@@ -49,7 +49,7 @@ public class DBFunc implements IFuncCall{
 		
 		if (args.length != 2 && args.length != 4)
 		{
-			throw new DataInvalidException("Func[sql] needs 2 or 4 args.");
+			throw new DataInvalidException("Func[sql] requires 2 or 4 args.");
 		}
 		
 		String dbq[] = new String[4];
@@ -64,7 +64,7 @@ public class DBFunc implements IFuncCall{
 		{
 			dbq[3] = expend(args[1], table);
 			String [] dbargs = readFuncParam(expend(args[0], table));
-			if (dbargs.length != 3) throw new DataInvalidException("Func[sql] DBconn needs 3 args: " + dbargs.length);
+			if (dbargs.length != 3) throw new DataInvalidException("Func[sql] DBconn requires 3 args: " + dbargs.length);
 			for (int i = 0; i < 3; i++)
 			{
 				dbq[i] = dbargs[i];

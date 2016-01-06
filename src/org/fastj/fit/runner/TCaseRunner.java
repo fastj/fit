@@ -119,7 +119,10 @@ public class TCaseRunner {
 			{
 				exec.execute(new Runnable() {
 					public void run() {
-						tp.getSysVars().setParent(setup.getSysVars());
+						if (setup != null)
+						{
+							tp.getSysVars().setParent(setup.getSysVars());
+						}
 						try {
 							TCaseRunner.this.run(tp);
 						} catch (Throwable e) {
@@ -136,7 +139,13 @@ public class TCaseRunner {
 			}
 		}
 		
-		if (teardown != null) run(teardown);
+		if (teardown != null){
+			if (setup != null)
+			{
+				teardown.getSysVars().setParent(setup.getSysVars());
+			}
+			run(teardown);
+		}
 		
 		System.exit(0);
 	}

@@ -74,5 +74,8 @@ public class Funcs {
 		regist(new PatternGet());
 		regist(new ReadFile());
 		regist(new LoopDataGenerator());
+		regist(new JSFunc());
+		regist(new VarCheckFunc());
+		
 	}
 }

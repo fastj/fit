@@ -41,7 +41,7 @@ public class IFFunc implements IFunction{
 		
 		if (args.length < 2 || args.length > 3)
 		{
-			throw new DataInvalidException("Func[if] needs 2 or 3 args.");
+			throw new DataInvalidException("Func[if] requires 2 or 3 args.");
 		}
 		
 		String expr = StringUtil.expend(args[0], ptable);

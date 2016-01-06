@@ -137,6 +137,12 @@ public class TCSLoader {
 				
 				if (line.indexOf(".fitc") > -1 /*&& "rasthl".indexOf(line.charAt(0)) > -1*/)
 				{
+					if (suite == null)
+					{
+						suite = TSuite.createV2(runfile.getName().split("\\.")[0], 0);
+						suite.setProject(tproj);
+					}
+					
 					List<String> parts = new ArrayList<>();
 					StringUtil.readCFParamStr(line + ")", 0, parts, ' ');
 					String tcfStr = findTcFile(parts);

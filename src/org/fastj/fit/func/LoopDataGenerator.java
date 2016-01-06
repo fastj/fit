@@ -40,7 +40,7 @@ public class LoopDataGenerator implements IFunction{
 		
 		if (args == null || args.length < 1 || args.length > 3)
 		{
-			throw new DataInvalidException("Func[ldata] needs 2 or 3 args.");
+			throw new DataInvalidException("Func[ldata] requires 2 or 3 args.");
 		}
 		
 		String prefix = args.length > 1 ? expend(args[0], ptable) : "";
