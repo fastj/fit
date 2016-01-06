@@ -417,6 +417,7 @@ public final class StringUtil {
 	
 	public static String sendStr(String str)
 	{
+		if (str == null || str.length() < 2) return str;
 		int len = str.length();
 		if (str.charAt(len - 2) == '\\' && str.charAt(len - 1) == 'n')
 		{
