@@ -219,7 +219,7 @@ public final class TRun {
 		}
 		else
 		{
-			try { cdl.await(); } catch (InterruptedException e) {}
+			try { cdl.await(); } catch (InterruptedException e) {} finally { tc.setEndTime(System.currentTimeMillis()); }
 			if (schedule != null) executor.shutdown();
 			
 			//all copy is finished.
@@ -275,22 +275,17 @@ public final class TRun {
 				tr.mergeResult(sr);
 				
 				nlog.error("TestCase {} Exception occur:", e, tc.getName());
-//				tc.append(String.format("TestCase [%s] Exception occur: \r\n%s", tc.getName(), EFormat.exStr(e)));
 			}
 			finally
 			{
 				tc.mergeResult(tr);
-				cdl.countDown();
-				if (cdl.getCount() == 0)
-				{
-					tc.setEndTime(System.currentTimeMillis());
-				}
 				
 				context.closeResources();
 				//log
+				nlog.trace(" ****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
 				tc.append(nlog);
 				
-				nlog.trace(" ****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
+				cdl.countDown();
 			}
 		}
 		

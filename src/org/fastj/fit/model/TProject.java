@@ -84,6 +84,7 @@ public class TProject implements org.fastj.fit.intf.TProject{
 			WOLNode cdl = wl.get(i);
 			cdl.await(); 
 			wl.remove(i);
+			cdl.tcase.setEndTime(System.currentTimeMillis());
 			if (postProc != null)
 			{
 				try {
