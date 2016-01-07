@@ -181,7 +181,7 @@ public final class TRun {
 			return;
 		}
 		
-		String lvars[] = loopVars(tc.getLoopVars());
+		String lvars[] = splits(tc.getLoopVars(), false);
 		List<ParameterTable> lparas = splits(tcpara, lvars);
 		
 		Schedule schedule = tc.getSchedule();
@@ -265,6 +265,7 @@ public final class TRun {
 			context.setResult(tr);
 			context.setProject(tc.getProject());
 			try {
+				fillLoopData(tr, tc, ptable);
 				run(tc, ptable, context);
 			} 
 			catch (Throwable e)
@@ -457,15 +458,23 @@ public final class TRun {
 			try {
 				runStep(step, context, ptable);
 			} catch (Throwable e) {
+				NodeLogger nlog = context.getLog();
 				StepResult srlt = new StepResult();
 				srlt.setRequest(step.getFuncCmd());
 				String str = "Fail. " + EFormat.exStr(e);
 				srlt.setResponse(str);
 				srlt.addMessage(str);
 				srlt.setResult(Consts.BLOCKED);
+				try {
+					fillLoopData(srlt, step, ptable);
+				} catch (DataInvalidException e1) {
+					nlog.error("  Run step(InternalERROR) [{}] DataInvalidException: {}", step.getFuncCmd(), e.getMessage());
+				} catch (ParamIncertitudeException e1) {
+					nlog.error("  Run step(InternalERROR) [{}] ParamIncertitudeException: {}", step.getFuncCmd(), e.getMessage());
+				}
 				step.mergeSResult(srlt);
 				
-				NodeLogger nlog = context.getLog();
+				
 				nlog.error("  Run step(T) [{}] error:", e, step.getFuncCmd());
 			}
 			finally
@@ -494,6 +503,7 @@ public final class TRun {
 					
 					if (sr.isPass() || sr.isBlock() || sr.isFastFail() || System.currentTimeMillis() >= endTime)
 					{
+						fillLoopData(sr, step, ptable);
 						step.mergeSResult(sr);
 						if (perf != null) perf.put(step.getFuncCmd(), sr.getStart(), sr.getCost());
 						break;
@@ -538,6 +548,7 @@ public final class TRun {
 		StepResult sr = vft.check();
 		sr.setStart(stepStart);
 		sr.setCost(cost);
+		
 		if (fresp.getCode() != Response.OK)	
 		{
 			sr.addMessage(fresp.getPhrase());
@@ -595,6 +606,27 @@ public final class TRun {
 		NodeLogger nlog = ctx.getLog();
 		nlog.append(log);
 		return sr;
+	}
+	
+	private static void fillLoopData(StepResult sr, TestStep tstep, ParameterTable table) throws DataInvalidException, ParamIncertitudeException
+	{
+		String varNames [] = splits(tstep.getLoopVars(), false);
+		
+		for (String var : varNames)
+		{
+			String vname = expend(var, table);
+			sr.getLoopData().add(vname, table.getPara(vname, "nil: Internal ERROR"));
+		}
+	}
+	
+	private static void fillLoopData(TResult tr, TestCase tcase, ParameterTable table) throws DataInvalidException, ParamIncertitudeException{
+		String varNames [] = splits(tcase.getLoopVars(), false);
+		
+		for (String var : varNames)
+		{
+			String vname = expend(var, table);
+			tr.getLoopData().add(vname, table.getPara(vname, "nil: Internal ERROR"));
+		}
 	}
 	
 	private static void runMStep(TestStep pstep, MStep mstep, TContext ctx, ParameterTable table) throws ParamIncertitudeException, DataInvalidException 

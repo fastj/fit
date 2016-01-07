@@ -30,8 +30,16 @@ public class TResult{
 	private String name;
 	private String tid;
 	private int result = TCNode.PASS;
+	private long start = 0;
+	private long end = 0;
 	private List<StepResult> results = new ArrayList<StepResult>();
+	private ParameterTable loopData = new ParameterTable();
 
+	public boolean isPass()
+	{
+		return result == TCNode.PASS;
+	}
+	
 	public synchronized void mergeResult(StepResult rlt) {
 		results.add(rlt);
 		result = result < rlt.getResult() ? rlt.getResult() : result;
@@ -77,6 +85,26 @@ public class TResult{
 		this.tid = tid;
 	}
 	
+	public ParameterTable getLoopData() {
+		return loopData;
+	}
+
+	public long getStart() {
+		return start;
+	}
+
+	public void setStart(long start) {
+		this.start = start;
+	}
+
+	public long getEnd() {
+		return end;
+	}
+
+	public void setEnd(long end) {
+		this.end = end;
+	}
+
 	public String toString()
 	{
 		List<StepResult> resultscopy = new ArrayList<>();

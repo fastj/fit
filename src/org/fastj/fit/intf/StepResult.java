@@ -32,6 +32,7 @@ public class StepResult{
 	private long start = 0;
 	private int cost = 0;
 	private List<String> messages = new ArrayList<String>();
+	private ParameterTable loopData = new ParameterTable();
 	private int code = TCNode.PASS;
 
 	public boolean isBlock() {
@@ -102,6 +103,10 @@ public class StepResult{
 
 	public void setStart(long start) {
 		this.start = start;
+	}
+
+	public ParameterTable getLoopData() {
+		return loopData;
 	}
 
 }
