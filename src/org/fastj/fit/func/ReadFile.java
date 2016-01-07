@@ -38,7 +38,7 @@ public class ReadFile implements IFunction{
 
 	@Override
 	public String name() {
-		return "read_txt";
+		return "fread";
 	}
 
 	@Override
@@ -51,6 +51,8 @@ public class ReadFile implements IFunction{
 		
 		String path = trim(expend(args[0], table));
 		File f = new File(path);
+		
+		if (!f.exists()) return "not_exist";
 		
 		String encoding = args.length == 2 ? trim(expend(args[1], table)) : "utf-8";
 		return read(f, encoding);
@@ -69,7 +71,7 @@ public class ReadFile implements IFunction{
 			}
 			return rlt.toString();
 		} catch (FileNotFoundException e) {
-			return "Not Exists";
+			return "not_exist";
 		} catch (IOException e1) {
 			return e1.getMessage();
 		}
