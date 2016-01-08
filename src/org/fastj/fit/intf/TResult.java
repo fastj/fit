@@ -105,6 +105,10 @@ public class TResult{
 		this.end = end;
 	}
 
+	public List<StepResult> getResults() {
+		return results;
+	}
+
 	public String toString()
 	{
 		List<StepResult> resultscopy = new ArrayList<>();
