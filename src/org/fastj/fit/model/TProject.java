@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,21 @@ public class TProject implements org.fastj.fit.intf.TProject{
 			
 			wl.add(new WOLNode(cdl, executor,tcase, st));
 		}
+	}
+	
+	public void waitAll()
+	{
+		if (levelWaitMap.isEmpty()) return;
+		
+		List<Integer> keys = new ArrayList<>();
+		keys.addAll(levelWaitMap.keySet());
+		Collections.sort(keys);
+		
+		for (int lv : keys)
+		{
+			levelWait(lv);
+		}
+		
 	}
 	
 	public void levelWait(int level)

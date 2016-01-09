@@ -160,6 +160,8 @@ public class TCaseRunner {
 			TRun.run(tproj, level, tsl);
 		}
 		
+		tproj.waitAll();
+		
 		//report
 		if (tproj.getPostProc() != null)
 		{

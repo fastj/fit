@@ -66,7 +66,6 @@ public final class TRun {
 		if (tsl.size() == 1)
 		{
 			new TSuiteTask(tsl.get(0), null).run();
-			return;
 		}
 		else if (tsl.size() > 1)
 		{

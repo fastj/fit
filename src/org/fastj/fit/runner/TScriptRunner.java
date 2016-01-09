@@ -89,6 +89,8 @@ public class TScriptRunner {
 			}
 		}
 		
+		tproj.waitAll();
+		
 		//report
 		if (tproj.getPostProc() != null)
 		{

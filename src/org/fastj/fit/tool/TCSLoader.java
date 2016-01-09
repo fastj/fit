@@ -94,6 +94,7 @@ public class TCSLoader {
 	{
 		String dir = runfile.getParentFile() == null ? "." : runfile.getParentFile().getAbsolutePath();
 		tproj.setDir(dir);
+		tproj.getSysVars().add("__rt.dir__", dir);
 		
 		int lineTag = 0;
 		String line = null;
