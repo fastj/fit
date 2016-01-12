@@ -29,7 +29,6 @@ import org.fastj.fit.intf.FuncResponse;
 import org.fastj.fit.intf.ParamIncertitudeException;
 import org.fastj.fit.intf.ParameterTable;
 import org.fastj.fit.intf.PerfStat;
-import org.fastj.fit.intf.Response;
 import org.fastj.fit.intf.ScheduleTask;
 import org.fastj.fit.intf.StepResult;
 import org.fastj.fit.intf.TCNode;
@@ -46,7 +45,6 @@ import org.fastj.fit.model.TSuite;
 import org.fastj.fit.model.TestCase;
 import org.fastj.fit.model.TestStep;
 import org.fastj.fit.model.verify.VerifyTable;
-//import org.fastj.net.api.SshConnection;
 import static org.fastj.fit.tool.StringUtil.*;
 
 /**
@@ -548,18 +546,25 @@ public final class TRun {
 		sr.setStart(stepStart);
 		sr.setCost(cost);
 		
-		if (fresp.getCode() != Response.OK)	
+		if (!sr.isPass())
 		{
-			sr.addMessage(fresp.getPhrase());
-			log.error("Exception Message: ", fresp.getPhrase());
+			log.error("REQ: {}", fresp.getRequest());
+			log.error("RESP: \r\n{}", jsonEntity);
+		}else
+		{
+			log.info("REQ: {}", fresp.getRequest());
+			log.info("RESP: \r\n{}", jsonEntity);
+		}
+		
+		for (String msg : sr.getMessages())
+		{
+			log.info("Check: {}", msg);
 		}
 		
 		sr.setRequest(fresp.getRequest());
 		sr.setResponse(JSONHelper.jsonString(fresp.getEntity()));
 		if (sr.isPass())
 		{
-			log.info("REQ: {}", fresp.getRequest());
-			log.info("RESP: \r\n{}", jsonEntity);
 			for (TOut to : step.getOutCmdLines())
 			{
 				String name = expend(to.nameExpr, ptable);
@@ -576,29 +581,17 @@ public final class TRun {
 					pvalue = path;
 				}
 				
-				log.info("Out param ===> {} = {}", name, pvalue);
+				log.trace("Out param ===> {} = {}", name, pvalue);
 				if (to.global)
 				{
 					step.getOwner().getProject().getSysVars().add(name, pvalue);
 				}
-				else
-				{
-					//TestCase copy scope
-					ctx.out(name, pvalue);
-					//TestStep copy scope
-					ptable.add(name, pvalue);
-				}
+				
+				//TestCase copy scope
+				ctx.out(name, pvalue);
+				//TestStep copy scope
+				ptable.add(name, pvalue);
 			}
-		}
-		else
-		{
-			log.error("REQ: {}", fresp.getRequest());
-			log.error("RESP: \r\n{}", jsonEntity);
-		}
-		
-		for (String msg : sr.getMessages())
-		{
-			log.info("Check: {}", msg);
 		}
 		
 		log.trace("====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "OK" : sr.isBlock() ? "BLOCK" : "FAIL");
