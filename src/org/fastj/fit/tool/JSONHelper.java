@@ -80,7 +80,7 @@ public class JSONHelper {
 			if (jo == null)
 			{
 				jo = new HashMap<String, Object>();
-				jo.put("text", content);
+				jo.put("content", content);
 			}
 		}
 		

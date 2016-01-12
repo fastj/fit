@@ -76,6 +76,6 @@ public class Funcs {
 		regist(new LoopDataGenerator());
 		regist(new JSFunc());
 		regist(new VarCheckFunc());
-		
+		regist(new ChkFunc());
 	}
 }
