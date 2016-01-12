@@ -70,7 +70,7 @@ public class TestCase implements TCNode{
 
 	public void valid() throws DataInvalidException
 	{
-		if (isLevelWait() && getWaitLevel() < getOwner().getLevel())
+		if (steps.isEmpty() || (isLevelWait() && getWaitLevel() < getOwner().getLevel()))
 		{
 			throw new DataInvalidException("Wait on level setting invalid.");
 		}

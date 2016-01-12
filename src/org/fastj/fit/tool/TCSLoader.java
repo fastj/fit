@@ -357,6 +357,18 @@ public class TCSLoader {
 			LogUtil.error("Line parse {}:{}, {}@{} : {}", e.getClass().getName(), e.getMessage(), sf.getName(), lineTag, line);
 		}
 		
+		TestCase tcase = suite.getLast();
+		if (tcase != null)
+		{
+			try {
+				tcase.valid();
+				tcase.initTStage();
+			} catch (DataInvalidException e) {
+				//invalid test case
+				suite.getTestCases().remove(tcase);
+			}
+		}
+		
 	}//End of loadScripts
 	
 	private static void parseParaLine(String line, TestCase tcase, TestStep step, int lineTag) throws DataInvalidException, ParamIncertitudeException
