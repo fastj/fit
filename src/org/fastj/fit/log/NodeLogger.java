@@ -31,7 +31,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.debug())
 		{
-			log(LogUtil.format(msg, args), false);
+			log(LogUtil.format("DEBUG", msg, args), false);
 		}
 	}
 	
@@ -39,7 +39,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.info())
 		{
-			log(LogUtil.format(msg, args), false);
+			log(LogUtil.format("INFO", msg, args), false);
 		}
 	}
 	
@@ -47,7 +47,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.warn())
 		{
-			log(LogUtil.format(msg, args), true);
+			log(LogUtil.format("WARN", msg, args), true);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.trace())
 		{
-			log(LogUtil.format(msg, args), true);
+			log(LogUtil.format("TRACE", msg, args), true);
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.error())
 		{
-			log(LogUtil.format(msg, args), true);
+			log(LogUtil.format("ERROR", msg, args), true);
 		}
 	}
 	
@@ -71,7 +71,7 @@ public class NodeLogger {
 	{
 		if (LogUtil.error())
 		{
-			log(LogUtil.format(msg, args) + "\r\n    " + EFormat.exStrEx(t, true), true);
+			log(LogUtil.format("ERROR", msg, args) + "\r\n    " + EFormat.exStrEx(t, true), true);
 		}
 	}
 	

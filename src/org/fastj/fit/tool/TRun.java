@@ -150,7 +150,7 @@ public final class TRun {
 				Object ro = JS.val(jsexpr = expend(tc.getSkipExpr(), tc.getParamTable()));
 				if (ro instanceof Boolean && (Boolean) ro)
 				{
-					tc.getNLoggor().warn("  ===> TestCase [{}] skiped. jsExpr=[{}]", tc.getName(), jsexpr);
+					tc.getNLoggor().warn("===> TestCase [{}] skiped. jsExpr=[{}]", tc.getName(), jsexpr);
 					TResult tr = new TResult();
 					StepResult sr = new StepResult();
 					sr.addMessage("Test Skipped: " + jsexpr);
@@ -161,7 +161,7 @@ public final class TRun {
 				}
 				else if (!(ro instanceof Boolean))
 				{
-					tc.getNLoggor().warn("  ===> TestCase [{}] jsExpr invalid: [{}]", tc.getName(), jsexpr);
+					tc.getNLoggor().warn("===> TestCase [{}] jsExpr invalid: [{}]", tc.getName(), jsexpr);
 				}
 			}
 		} 
@@ -170,7 +170,7 @@ public final class TRun {
 			//skip expr fail, ignore and go test
 		}
 		catch (Throwable e1) {
-			tc.getNLoggor().warn("  ===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(), EFormat.exStrEx(e1, true));
+			tc.getNLoggor().warn("===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(), EFormat.exStrEx(e1, true));
 			TResult tr = new TResult();
 			StepResult sr = new StepResult();
 			sr.addMessage("Fail. " + EFormat.exStr(e1));
@@ -282,7 +282,7 @@ public final class TRun {
 				
 				context.closeResources();
 				//log
-				nlog.trace(" ****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
+				nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
 				tc.append(nlog);
 				
 				cdl.countDown();
@@ -293,7 +293,7 @@ public final class TRun {
 		{
 			NodeLogger nlog = context.getLog();
 			
-			nlog.info(" ****** Start run TestCase [{}] tid={}", tc.getName(), tc.getTid());
+			nlog.info("****** Start run TestCase [{}] tid={}", tc.getName(), tc.getTid());
 			TResult tr = context.getResult();
 			
 			boolean teardown = false;
@@ -316,7 +316,7 @@ public final class TRun {
 				if (!teardown || (teardown && tstep.getTestStage() == Consts.TSTAGE_TEARDOWN))
 					try {
 						if (tstep.getSkipExpr() != null && (boolean) JS.val(expend(tstep.getSkipExpr(), tctable))) {
-							nlog.trace("  ===> Step [{}] skiped.", tstep.getFuncCmd());
+							nlog.trace("===> Step [{}] skiped.", tstep.getFuncCmd());
 							skippedCnt++;
 							continue;
 						}
@@ -410,7 +410,7 @@ public final class TRun {
 							}
 							ctx.getResult().mergeResult(step.getResults());
 						} catch (Throwable e) {
-							LogUtil.error("    Merge step[{}] results fail: {}: {}", e, step.getFuncCmd(), e.getClass(), e.getMessage());
+							LogUtil.error("Merge step[{}] results fail: {}: {}", e, step.getFuncCmd(), e.getClass(), e.getMessage());
 						}
 					}
 				}, schedule == null);
@@ -426,7 +426,7 @@ public final class TRun {
 			step.mergeSResult(srlt);
 			
 			NodeLogger nlog = ctx.getLog();
-			nlog.error("  Run step(TRun) [{}] error: ", step.getFuncCmd());
+			nlog.error("Run step(TRun) [{}] error: ", step.getFuncCmd());
 		}
 		finally
 		{
@@ -467,14 +467,14 @@ public final class TRun {
 				try {
 					fillLoopData(srlt, step, ptable);
 				} catch (DataInvalidException e1) {
-					nlog.error("  Run step(InternalERROR) [{}] DataInvalidException: {}", step.getFuncCmd(), e.getMessage());
+					nlog.error("Run step(InternalERROR) [{}] DataInvalidException: {}", step.getFuncCmd(), e.getMessage());
 				} catch (ParamIncertitudeException e1) {
-					nlog.error("  Run step(InternalERROR) [{}] ParamIncertitudeException: {}", step.getFuncCmd(), e.getMessage());
+					nlog.error("Run step(InternalERROR) [{}] ParamIncertitudeException: {}", step.getFuncCmd(), e.getMessage());
 				}
 				step.mergeSResult(srlt);
 				
 				
-				nlog.error("  Run step(T) [{}] error:", e, step.getFuncCmd());
+				nlog.error("Run step(T) [{}] error:", e, step.getFuncCmd());
 			}
 			finally
 			{
@@ -533,7 +533,7 @@ public final class TRun {
 	private static StepResult stepFuncRun(TestStep step, TContext ctx, ParameterTable ptable) throws ParamIncertitudeException, DataInvalidException 
 	{
 		NodeLogger log = new NodeLogger();
-		log.trace("  ====== Start run step ===> {}", step.getFuncCmd());
+		log.trace("====== Start run step ===> {}", step.getFuncCmd());
 		long stepStart = System.currentTimeMillis();
 		FuncResponse fresp = CallUtil.run(step, ctx, ptable);
 		String jsonEntity = JSONHelper.jsonString(fresp.getEntity());
@@ -551,15 +551,15 @@ public final class TRun {
 		if (fresp.getCode() != Response.OK)	
 		{
 			sr.addMessage(fresp.getPhrase());
-			log.error("    Exception Message: ", fresp.getPhrase());
+			log.error("Exception Message: ", fresp.getPhrase());
 		}
 		
 		sr.setRequest(fresp.getRequest());
 		sr.setResponse(JSONHelper.jsonString(fresp.getEntity()));
 		if (sr.isPass())
 		{
-			log.info("    REQ: {}", fresp.getRequest());
-			log.info("    RESP: \r\n{}", jsonEntity);
+			log.info("REQ: {}", fresp.getRequest());
+			log.info("RESP: \r\n{}", jsonEntity);
 			for (TOut to : step.getOutCmdLines())
 			{
 				String name = expend(to.nameExpr, ptable);
@@ -576,7 +576,7 @@ public final class TRun {
 					pvalue = path;
 				}
 				
-				log.info("    Out param ===> {} = {}", name, pvalue);
+				log.info("Out param ===> {} = {}", name, pvalue);
 				if (to.global)
 				{
 					step.getOwner().getProject().getSysVars().add(name, pvalue);
@@ -592,16 +592,16 @@ public final class TRun {
 		}
 		else
 		{
-			log.error("    REQ: {}", fresp.getRequest());
-			log.error("    RESP: \r\n{}", jsonEntity);
+			log.error("REQ: {}", fresp.getRequest());
+			log.error("RESP: \r\n{}", jsonEntity);
 		}
 		
 		for (String msg : sr.getMessages())
 		{
-			log.info("    Check: {}", msg);
+			log.info("Check: {}", msg);
 		}
 		
-		log.trace("  ====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "OK" : sr.isBlock() ? "BLOCK" : "FAIL");
+		log.trace("====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "OK" : sr.isBlock() ? "BLOCK" : "FAIL");
 		NodeLogger nlog = ctx.getLog();
 		nlog.append(log);
 		return sr;

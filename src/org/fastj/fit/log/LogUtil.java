@@ -16,6 +16,9 @@
 
 package org.fastj.fit.log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class LogUtil {
 	
 	public static final int DEBUG = 0;
@@ -24,11 +27,16 @@ public class LogUtil {
 	public static final int ERROR = 3;
 	public static final int TRACE = 10;
 	public static final int CLOSE = 16;
-	public static final String DFORMAT = "yyyy-MM-DD HH:mm:ss";
+	private static final String DFORMAT = "yyyy-MM-DD HH:mm:ss";
+	private static final SimpleDateFormat sdf = new SimpleDateFormat(DFORMAT);
 	
 	public static int level = INFO;
 	
 	private static NodeLogger nlog = new NodeLogger();
+	
+	public static String date(){
+		return sdf.format(new Date());
+	}
 	
 	public static byte[] getLog()
 	{
@@ -72,37 +80,38 @@ public class LogUtil {
 	
 	public static void info(String msg, Object ... args)
 	{
-		nlog.info(LogUtil.format(msg, args));
+		nlog.info(msg, args);
 	}
 	
 	public static void warn(String msg, Object ... args)
 	{
-		nlog.warn(LogUtil.format(msg, args));
+		nlog.warn(msg, args);
 	}
 	
 	public static void trace(String msg, Object ... args)
 	{
-		nlog.trace(LogUtil.format(msg, args));
+		nlog.trace(msg, args);
 	}
 	
 	public static void error(String msg, Object ... args)
 	{
-		nlog.error(LogUtil.format(msg, args));
+		nlog.error(msg, args);
 	}
 	
 	public static void error(String msg, Throwable t, Object ... args)
 	{
-		nlog.error(LogUtil.format(msg, args));
+		nlog.error(msg, t, args);
 	}
 	
-	public static String format(String expr, Object ... args)
+	public static String format(String level, String expr, Object ... args)
 	{
-		if (expr == null || args == null || args.length == 0)
+		if (args == null || args.length == 0)
 		{
-			return String.valueOf(expr);
+			return date() + "  " + level + "  " + String.valueOf(expr);
 		}
 		
-		StringBuilder buff = new StringBuilder(expr);
+		StringBuilder buff = new StringBuilder(1024);
+		buff.append(date()).append("  ").append(level).append("  ").append(expr);
 		int idx = -1;
 		int tag = 0;
 		
