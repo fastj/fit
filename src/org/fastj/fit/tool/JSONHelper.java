@@ -87,21 +87,6 @@ public class JSONHelper {
 		return jo;
 	}
 	
-//	public static Map<String, Object> getJson(Response<HttpRsp<String>> hresp)
-//	{
-//		Map<String, Object> jo = getJson(hresp.getEntity().getContent());
-//		
-//		jo.put("httpcode", hresp.getEntity().getHttpCode());
-//		Map<String, Object> headers = new HashMap<String, Object>();
-//		jo.put("header", headers);
-//		for (String h : hresp.getEntity().getHeaders().keySet())
-//		{
-//			headers.put(h, hresp.getEntity().getHeaders().get(h));
-//		}
-//		
-//		return jo;
-//	}
-	
 	public static String jsonString(Object o)
 	{
 		ObjectMapper mapper = new ObjectMapper();
