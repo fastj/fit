@@ -57,7 +57,7 @@ public final class Consts {
 	
 	public static final String FUNC_PATTERRN = "^([A-Za-z0-9_]{1,})\\(([\\S\\s]*)\\)$";
 	
-	public static final String IMPORT_CONSTS_PATTERN = "^import[\\s]{1,}consts([\\S\\s]*)$";
+	public static final String IMPORT_CONSTS_PATTERN = "^import[\\s]{1,}[\\S]*consts([\\S\\s]*)$";
 	
 	public static final String IMPORT_STC_PATTERN = "^import[\\s]{1,3}([\\S\\s]*)\\.fitc$";
 	

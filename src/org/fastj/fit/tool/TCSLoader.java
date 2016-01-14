@@ -112,7 +112,7 @@ public class TCSLoader {
 				//Import Variables
 				if (line.matches(Consts.IMPORT_CONSTS_PATTERN))
 				{
-					String fname = line.split("[\\s]{1,}")[1];
+					String fname = line.split("[\\s]{1,}", 2)[1];
 					File cfile = tproj.getProjectFile(fname);
 					if (cfile != null)
 					{
