@@ -262,7 +262,6 @@ public final class TRun {
 			context.setResult(tr);
 			context.setProject(tc.getProject());
 			try {
-				fillLoopData(tr, tc, ptable);
 				run(tc, ptable, context);
 			} 
 			catch (Throwable e)
@@ -277,7 +276,11 @@ public final class TRun {
 			finally
 			{
 				tc.mergeResult(tr);
-				
+				try {
+					fillLoopData(tr, context, tc, ptable);
+				} catch (DataInvalidException | ParamIncertitudeException e) {
+					nlog.error("TR fillLoopData(InternalERROR): {}", e.getMessage());
+				}
 				context.closeResources();
 				//log
 				nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
@@ -463,7 +466,7 @@ public final class TRun {
 				srlt.addMessage(str);
 				srlt.setResult(Consts.BLOCKED);
 				try {
-					fillLoopData(srlt, step, ptable);
+					fillLoopData(srlt, context, step, ptable);
 				} catch (DataInvalidException e1) {
 					nlog.error("Run step(InternalERROR) [{}] DataInvalidException: {}", step.getFuncCmd(), e.getMessage());
 				} catch (ParamIncertitudeException e1) {
@@ -500,7 +503,7 @@ public final class TRun {
 					
 					if (sr.isPass() || sr.isBlock() || sr.isFastFail() || System.currentTimeMillis() >= endTime)
 					{
-						fillLoopData(sr, step, ptable);
+						fillLoopData(sr, ctx, step, ptable);
 						step.mergeSResult(sr);
 						if (perf != null) perf.put(step.getFuncCmd(), sr.getStart(), sr.getCost());
 						break;
@@ -525,8 +528,8 @@ public final class TRun {
 				runMStep(step, mstep, ctx, tcenv);
 			}
 			
-		}
-	}
+		}//StepTask.runStep
+	}//StepTask
 	
 	private static StepResult stepFuncRun(TestStep step, TContext ctx, ParameterTable ptable) throws ParamIncertitudeException, DataInvalidException 
 	{
@@ -600,9 +603,19 @@ public final class TRun {
 		return sr;
 	}
 	
-	private static void fillLoopData(StepResult sr, TestStep tstep, ParameterTable table) throws DataInvalidException, ParamIncertitudeException
+	private static void fillLoopData(StepResult sr, TContext ctx, TestStep tstep, ParameterTable table) throws DataInvalidException, ParamIncertitudeException
 	{
 		String varNames [] = splits(tstep.getLoopVars(), false);
+		if (!ctx.getOuts().isEmpty())
+		{
+			ParameterTable ctxtable = ctx.getOuts().copy();
+			ctxtable.setParent(table);
+			sr.getLoopData().setParent(ctxtable);
+		}
+		else
+		{
+			sr.getLoopData().setParent(table);
+		}
 		
 		for (String var : varNames)
 		{
@@ -611,8 +624,19 @@ public final class TRun {
 		}
 	}
 	
-	private static void fillLoopData(TResult tr, TestCase tcase, ParameterTable table) throws DataInvalidException, ParamIncertitudeException{
+	private static void fillLoopData(TResult tr, TContext ctx, TestCase tcase, ParameterTable table) throws DataInvalidException, ParamIncertitudeException{
 		String varNames [] = splits(tcase.getLoopVars(), false);
+		
+		if (!ctx.getOuts().isEmpty())
+		{
+			ParameterTable ctxtable = ctx.getOuts().copy();
+			ctxtable.setParent(table);
+			tr.getLoopData().setParent(ctxtable);
+		}
+		else
+		{
+			tr.getLoopData().setParent(table);
+		}
 		
 		for (String var : varNames)
 		{

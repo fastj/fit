@@ -48,6 +48,11 @@ public final class ParameterTable {
 		this.parent = parent;
 	}
 	
+	public boolean isEmpty()
+	{
+		return table.isEmpty();
+	}
+	
 	public List<Parameter> gets()
 	{
 		return table;
