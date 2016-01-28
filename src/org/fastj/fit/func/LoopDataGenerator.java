@@ -23,7 +23,7 @@ import org.fastj.fit.intf.ParameterTable;
 import static org.fastj.fit.tool.StringUtil.*;
 
 /**
- * ldata(prefix [, start: 1], len)
+ * ldata([prefix ,[start: 1,]] len)
  * 
  * @author zhouqingquan
  *

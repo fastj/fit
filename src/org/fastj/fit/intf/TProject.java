@@ -53,5 +53,7 @@ public interface TProject {
 	File getDataFile(String fileName);
 	
 	PerfStat getPerfStat();
+	
+	PostProc getPostProc();
 
 }

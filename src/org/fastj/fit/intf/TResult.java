@@ -34,6 +34,7 @@ public class TResult{
 	private long end = 0;
 	private List<StepResult> results = new ArrayList<StepResult>();
 	private ParameterTable loopData = new ParameterTable();
+	private String log = "";
 
 	public boolean isPass()
 	{
@@ -107,6 +108,14 @@ public class TResult{
 
 	public List<StepResult> getResults() {
 		return results;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
 	}
 
 	public String toString()

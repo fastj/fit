@@ -28,7 +28,7 @@ import org.fastj.fit.tool.StringUtil;
 /**
  * 正则取值
  * 
- * @command pt_get(regex, [group: 0], string_value)
+ * @command pt_get(regex, [group: 0,] string_value)
  * 
  * @author zhouqingquan
  */

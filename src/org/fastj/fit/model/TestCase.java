@@ -286,4 +286,26 @@ public class TestCase implements TCNode{
 		paramTable.setParent(owner.getParamTable());
 	}
 
+	public TestCase copy()
+	{
+		TestCase copy = new TestCase();
+		
+		copy.desc = desc;
+		copy.loopVars = loopVars;
+		copy.name = name;
+		copy.owner = owner;
+		copy.paramTable = paramTable;
+		copy.project = project;
+		copy.schedule = schedule;
+		copy.skipExpr = skipExpr;
+		copy.thread = thread;
+		copy.tid = tid;
+		for (TestStep step : steps)
+		{
+			copy.steps.add(step.copy());
+		}
+		
+		return copy;
+	}
+	
 }

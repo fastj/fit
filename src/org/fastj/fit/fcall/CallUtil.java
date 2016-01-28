@@ -104,26 +104,17 @@ public class CallUtil {
 		
 	}
 	
+	public IFuncCall getFCall(String name)
+	{
+		return FUNCS.get(name);
+	}
+	
 	static
 	{
 		//default
-//		regist(new HttpFunc("http_get"));
-//		regist(new HttpFunc("http_post"));
-//		regist(new HttpFunc("http_put"));
-//		regist(new HttpFunc("http_delete"));
-//		regist(new HttpFunc("http_patch"));
-//		regist(new HttpFunc("http_options"));
-//		regist(new SSHFunc("ssh_connect"));
-//		regist(new SSHFunc("ssh_exec"));
-//		regist(new SSHFunc("ssh_close"));
-//		regist(new SftpFunc("sftp_upload"));
-//		regist(new SftpFunc("sftp_download"));
-//		regist(new SnmpFunc("snmp_get"));
-//		regist(new SnmpFunc("snmp_set"));
-//		regist(new SnmpFunc("snmp_table"));
-//		regist(new CmdFunc());
 		regist(new DBFunc());
 		regist(new NOPFunc());
+		regist(new TRCall());
 	}
 	
 }

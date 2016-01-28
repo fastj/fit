@@ -56,7 +56,6 @@ public final class StringUtil {
 		try {
 			return Pattern.matches(pattern, str);
 		} catch (Throwable e) {
-			//TODO
 			return false;
 		}
 	}

@@ -101,17 +101,32 @@ public final class TRun {
 		
 		public void run()
 		{
-			for (TestCase tc : suite.getTestCases())
+			for (TestCase tcase : suite.getTestCases())
 			{
+				TestCase tc = tcase.copy();
 				try {
-					TRun.run(tproj, tc, null);
+					TRun.run0(tproj, tc, null);
 				} catch (Throwable e) {
 					TResult tr = new TResult();
 					StepResult sr = new StepResult();
+					sr.setCost(0);
+					sr.setStart(System.currentTimeMillis());
 					sr.addMessage("Fail. " + EFormat.exStr(e));
 					sr.setResult(Consts.BLOCKED);
 					tr.mergeResult(sr);
 					tc.mergeResult(tr);
+					
+					tc.getNLoggor().error("", e);
+					
+					//case failed
+					if (tproj.getPostProc() != null)
+					{
+						try {
+							tproj.getPostProc().finish(tc);
+						} catch (Exception e1) {
+							LogUtil.error("Call postProc[finishTC2] fail: ", e1);
+						}
+					}
 				}
 			}
 			
@@ -129,6 +144,11 @@ public final class TRun {
 	}
 	
 	public static void run(TProject tproj, TestCase tc, ParameterTable adds) throws ParamIncertitudeException, DataInvalidException
+	{
+		run0(tproj, tc.copy(), adds);
+	}
+	
+	private static void run0(TProject tproj, TestCase tc, ParameterTable adds) throws ParamIncertitudeException, DataInvalidException
 	{
 		tc.setStartTime(System.currentTimeMillis());
 		if (tproj.getPostProc() != null){
@@ -155,6 +175,9 @@ public final class TRun {
 					sr.setResult(Consts.SKIPPED);
 					tr.mergeResult(sr);
 					tc.mergeResult(tr);
+					
+					tr.setLog("Test Skipped: " + jsexpr);
+					
 					return;
 				}
 				else if (!(ro instanceof Boolean))
@@ -175,6 +198,9 @@ public final class TRun {
 			sr.setResult(Consts.BLOCKED);
 			tr.mergeResult(sr);
 			tc.mergeResult(tr);
+			
+			tr.setLog(EFormat.exStrEx(e1, true));
+			
 			return;
 		}
 		
@@ -256,11 +282,13 @@ public final class TRun {
 		public void run() {
 			long start = System.currentTimeMillis();
 			TResult tr = new TResult();
+			tr.setStart(start);
 			TContext context = new TContext();
 			NodeLogger nlog = new NodeLogger();
 			context.setLog(nlog);
 			context.setResult(tr);
 			context.setProject(tc.getProject());
+			context.setTestCase(tc);
 			try {
 				run(tc, ptable, context);
 			} 
@@ -275,7 +303,10 @@ public final class TRun {
 			}
 			finally
 			{
+				tr.setEnd(System.currentTimeMillis());
 				tc.mergeResult(tr);
+				tr.setLog(nlog.getLog());
+				
 				try {
 					fillLoopData(tr, context, tc, ptable);
 				} catch (DataInvalidException | ParamIncertitudeException e) {
@@ -283,8 +314,16 @@ public final class TRun {
 				}
 				context.closeResources();
 				//log
-				nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
-				tc.append(nlog);
+				try {
+					nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", expend(tc.getName(), ptable), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
+				} catch (ParamIncertitudeException | DataInvalidException e) {
+					nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
+				}
+				
+				if (tc.getTid().indexOf("${") < 0)
+				{
+					tc.append(nlog);
+				}
 				
 				cdl.countDown();
 			}
@@ -294,7 +333,7 @@ public final class TRun {
 		{
 			NodeLogger nlog = context.getLog();
 			
-			nlog.info("****** Start run TestCase [{}] tid={}", tc.getName(), tc.getTid());
+			nlog.info("****** Start run TestCase [{}] tid={}", expend(tc.getName(), tctable), tc.getTid());
 			TResult tr = context.getResult();
 			
 			boolean teardown = false;

@@ -36,6 +36,7 @@ public class TContext {
 	
 	private TProject project = null;
 	private TResult result = null;
+	private TCNode testCase = null;
 	private NodeLogger log = null;
 	private ParameterTable privOut = new ParameterTable();
 	private Map<String, Object> context = new HashMap<String, Object>();
@@ -48,6 +49,14 @@ public class TContext {
 
 	public void setProject(TProject project) {
 		this.project = project;
+	}
+
+	public TCNode getTestCase() {
+		return testCase;
+	}
+
+	public void setTestCase(TCNode testCase) {
+		this.testCase = testCase;
 	}
 
 	public TResult getResult() {
