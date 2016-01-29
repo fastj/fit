@@ -77,5 +77,6 @@ public class Funcs {
 		regist(new JSFunc());
 		regist(new VarCheckFunc());
 		regist(new ChkFunc());
+		regist(new LMatch());
 	}
 }

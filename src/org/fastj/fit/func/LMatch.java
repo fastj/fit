@@ -39,7 +39,7 @@ public class LMatch implements IFunction{
 		
 		StringBuilder buff = new StringBuilder("@data:");
 		Matcher m = Pattern.compile(regex).matcher(str);
-		if (m.find())
+		while (m.find())
 		{
 			buff.append("\"").append(m.group(g)).append("\"").append(", ");
 		}

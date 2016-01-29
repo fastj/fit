@@ -341,7 +341,9 @@ public final class TRun {
 			int currStage = Consts.TSTAGE_PRE;
 
 			int skippedCnt = 0;
-			for (TestStep tstep : tc.getSteps()) {
+			for (TestStep step : tc.getSteps()) {
+				TestStep tstep = step.copy();
+				
 				preStage = currStage;
 				currStage = tstep.getTestStage();
 
@@ -401,8 +403,10 @@ public final class TRun {
 	private static void runStep(final TestStep step, final TContext ctx, ParameterTable tctable) throws ParamIncertitudeException, DataInvalidException 
 	{
 		ParameterTable stepTable = step.getParamTable().copy();
+		ParameterTable ctxTable = ctx.getOuts().copy();
+		ctxTable.setParent(stepTable);
 		stepTable.setParent(tctable);
-		List<ParameterTable> stl = splits(stepTable, splits(step.getLoopVars(), false));
+		List<ParameterTable> stl = splits(ctxTable, splits(step.getLoopVars(), false));
 
 		Schedule schedule = step.getSchedule();
 		if (schedule != null) schedule.setTotal(stl.size());
@@ -522,13 +526,13 @@ public final class TRun {
 			}
 		}
 		
-		public void runStep(TestStep step, TContext ctx, ParameterTable ptable) throws ParamIncertitudeException, DataInvalidException 
+		public void runStep(TestStep step, TContext ctx, ParameterTable tcenv) throws ParamIncertitudeException, DataInvalidException 
 		{
 			long waitfor = step.getWaitfor();
 			
 			//TestCase Environment Copy
-			ParameterTable tcenv = ctx.getOuts().copy();
-			tcenv.setParent(ptable);
+//			ParameterTable tcenv = ptable;
+//			tcenv.setParent(ptable);
 			
 			//delay
 			sleep(step.getDelay());

@@ -87,7 +87,7 @@ public class TestCase implements TCNode{
 		return this;
 	}
 	
-	public void mergeResult(TResult tr)
+	public synchronized void mergeResult(TResult tr)
 	{
 		if (tr.getResult() != Consts.PASS && result == Consts.PASS)
 		{
@@ -285,7 +285,7 @@ public class TestCase implements TCNode{
 		owner.addTestCase(this);
 		paramTable.setParent(owner.getParamTable());
 	}
-
+	
 	public TestCase copy()
 	{
 		TestCase copy = new TestCase();

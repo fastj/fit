@@ -378,13 +378,13 @@ public class TCSLoader {
 		{
 			String name = trim(line.substring(0, idx));
 			String value = line.substring(idx + 1).trim();
-			if ("title".equals(name))
+			if ("title".equals(name) && step == null)
 			{
 				if (tcase == null) throw new DataInvalidException("Cannot set testcase property in AW scripts.");
 				tcase.setName(value);
 				return;
 			}
-			else if ("tid".equals(name))
+			else if ("tid".equals(name) && step == null)
 			{
 				if (tcase == null) throw new DataInvalidException("Cannot set testcase property in AW scripts.");
 				tcase.setTid(value);
