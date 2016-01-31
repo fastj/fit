@@ -18,8 +18,10 @@ package org.fastj.fit.intf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
@@ -91,12 +93,28 @@ public class TContext {
 		return context.containsKey(key);
 	}
 	
+	public void closeResource(String id)
+	{
+		Object ref = context.remove(id);
+		if (ref != null && ref instanceof ICloseable)
+		{
+			try {
+				((ICloseable) ref).close();
+			} catch (Throwable e) {
+				LogUtil.error("Auto close resource fail", e);
+			}
+		}
+	}
+	
 	public void closeResources()
 	{
-		for (Object obj : context.values())
+		Iterator<Entry<String, Object>> iter = context.entrySet().iterator();
+		while (iter.hasNext())
 		{
+			Object obj = iter.next().getValue();
 			if (obj instanceof ICloseable)
 			{
+				iter.remove();
 				try {
 					((ICloseable) obj).close();
 				} catch (Throwable e) {

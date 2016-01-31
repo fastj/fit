@@ -29,6 +29,7 @@ import org.fastj.fit.intf.FuncResponse;
 import org.fastj.fit.intf.ParamIncertitudeException;
 import org.fastj.fit.intf.ParameterTable;
 import org.fastj.fit.intf.PerfStat;
+import org.fastj.fit.intf.Response;
 import org.fastj.fit.intf.ScheduleTask;
 import org.fastj.fit.intf.StepResult;
 import org.fastj.fit.intf.TCNode;
@@ -580,6 +581,12 @@ public final class TRun {
 		log.trace("====== Start run step ===> {}", step.getFuncCmd());
 		long stepStart = System.currentTimeMillis();
 		FuncResponse fresp = CallUtil.run(step, ctx, ptable);
+		
+		if (fresp.getCode() != Response.OK)
+		{
+			log.error("CallFail: {}", fresp.getPhrase());
+		}
+		
 		String jsonEntity = JSONHelper.jsonString(fresp.getEntity());
 		ptable.add("_resp_", jsonEntity);
 		
