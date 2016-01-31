@@ -79,6 +79,12 @@ public class TContext {
 
 	public void put(String key, Object value)
 	{
+		Object obj = context.remove(key);
+		if (obj != null && obj instanceof ICloseable)
+		{
+			String id = "removed-" + System.currentTimeMillis();
+			context.put(id, obj);
+		}
 		context.put(key, value);
 	}
 	
