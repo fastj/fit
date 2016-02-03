@@ -26,6 +26,7 @@ import org.fastj.fit.intf.DataInvalidException;
 import org.fastj.fit.intf.ParamIncertitudeException;
 import org.fastj.fit.intf.Parameter;
 import org.fastj.fit.intf.ParameterTable;
+import org.fastj.fit.log.LogUtil;
 import org.fastj.fit.model.Consts;
 
 /**
@@ -85,6 +86,7 @@ public final class StringUtil {
 			len = svv.length > 1 && len == 1 ? svv.length : len;
 			if (svv.length != 1 && len != svv.length)
 			{
+				LogUtil.error("LoopSplits error: vv={}, vvlen={}, len={}", vv, svv.length, len);
 				throw new DataInvalidException("Invalid loop var setting.");
 			}
 			
