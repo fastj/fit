@@ -162,48 +162,48 @@ public final class TRun {
 			tcpara.addAll(adds);
 		}
 		
-		try {
-			String jsexpr = tc.getSkipExpr();
-			if (jsexpr != null)
-			{
-				Object ro = JS.val(jsexpr = expend(tc.getSkipExpr(), tc.getParamTable()));
-				if (ro instanceof Boolean && (Boolean) ro)
-				{
-					tc.getNLoggor().warn("===> TestCase [{}] skiped. jsExpr=[{}]", tc.getName(), jsexpr);
-					TResult tr = new TResult();
-					StepResult sr = new StepResult();
-					sr.addMessage("Test Skipped: " + jsexpr);
-					sr.setResult(Consts.SKIPPED);
-					tr.mergeResult(sr);
-					tc.mergeResult(tr);
-					
-					tr.setLog("Test Skipped: " + jsexpr);
-					
-					return;
-				}
-				else if (!(ro instanceof Boolean))
-				{
-					tc.getNLoggor().warn("===> TestCase [{}] jsExpr invalid: [{}]", tc.getName(), jsexpr);
-				}
-			}
-		} 
-		catch (ParamIncertitudeException pe)
-		{
-			//skip expr fail, ignore and go test
-		}
-		catch (Throwable e1) {
-			tc.getNLoggor().warn("===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(), EFormat.exStrEx(e1, true));
-			TResult tr = new TResult();
-			StepResult sr = new StepResult();
-			sr.addMessage("Fail. " + EFormat.exStr(e1));
-			sr.setResult(Consts.BLOCKED);
-			tr.mergeResult(sr);
-			tc.mergeResult(tr);
-			
-			tr.setLog(EFormat.exStrEx(e1, true));
-			
-			return;
-		}
+//		try {
+//			String jsexpr = tc.getSkipExpr();
+//			if (jsexpr != null)
+//			{
+//				Object ro = JS.val(jsexpr = expend(tc.getSkipExpr(), tc.getParamTable()));
+//				if (ro instanceof Boolean && (Boolean) ro)
+//				{
+//					tc.getNLoggor().warn("===> TestCase [{}] skiped. jsExpr=[{}]", tc.getName(), jsexpr);
+//					TResult tr = new TResult();
+//					StepResult sr = new StepResult();
+//					sr.addMessage("Test Skipped: " + jsexpr);
+//					sr.setResult(Consts.SKIPPED);
+//					tr.mergeResult(sr);
+//					tc.mergeResult(tr);
+//					
+//					tr.setLog("Test Skipped: " + jsexpr);
+//					
+//					return;
+//				}
+//				else if (!(ro instanceof Boolean))
+//				{
+//					tc.getNLoggor().warn("===> TestCase [{}] jsExpr invalid: [{}]", tc.getName(), jsexpr);
+//				}
+//			}
+//		} 
+//		catch (ParamIncertitudeException pe)
+//		{
+//			//skip expr fail, ignore and go test
+//		}
+//		catch (Throwable e1) {
+//			tc.getNLoggor().warn("===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(), EFormat.exStrEx(e1, true));
+//			TResult tr = new TResult();
+//			StepResult sr = new StepResult();
+//			sr.addMessage("Fail. " + EFormat.exStr(e1));
+//			sr.setResult(Consts.BLOCKED);
+//			tr.mergeResult(sr);
+//			tc.mergeResult(tr);
+//			
+//			tr.setLog(EFormat.exStrEx(e1, true));
+//			
+//			return;
+//		}
 		
 		String lvars[] = splits(tc.getLoopVars(), false);
 		List<ParameterTable> lparas = splits(tcpara, lvars);
@@ -266,6 +266,43 @@ public final class TRun {
 		
 	}
 	
+	private static boolean skip(TestCase tc, ParameterTable table, TResult tr) {
+		try {
+			String jsexpr = tc.getSkipExpr();
+			if (jsexpr != null) {
+				Object ro = JS.val(jsexpr = expend(tc.getSkipExpr(), table));
+				if (ro instanceof Boolean && (Boolean) ro) {
+					tc.getNLoggor().warn("===> TestCase [{}] skiped. jsExpr=[{}]", tc.getName(), jsexpr);
+					StepResult sr = new StepResult();
+					sr.addMessage("Test Skipped: " + jsexpr);
+					sr.setResult(Consts.SKIPPED);
+					tr.mergeResult(sr);
+
+					tr.setLog("Test Skipped: " + jsexpr);
+
+					return true;
+				} else if (!(ro instanceof Boolean)) {
+					tc.getNLoggor().warn("===> TestCase [{}] jsExpr invalid: [{}]", tc.getName(), jsexpr);
+				}
+			}
+		} catch (ParamIncertitudeException pe) {
+			// skip expr fail, ignore and go test
+		} catch (Throwable e1) {
+			tc.getNLoggor().warn("===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(),
+					EFormat.exStrEx(e1, true));
+			StepResult sr = new StepResult();
+			sr.addMessage("Fail. " + EFormat.exStr(e1));
+			sr.setResult(Consts.BLOCKED);
+			tr.mergeResult(sr);
+
+			tr.setLog(EFormat.exStrEx(e1, true));
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private static class TCaseTask implements Runnable
 	{
 		TestCase tc;
@@ -291,7 +328,10 @@ public final class TRun {
 			context.setProject(tc.getProject());
 			context.setTestCase(tc);
 			try {
-				run(tc, ptable, context);
+				if (!skip(tc, ptable, tr))
+				{
+					run(tc, ptable, context);
+				}
 			} 
 			catch (Throwable e)
 			{
