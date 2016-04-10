@@ -32,6 +32,8 @@ public interface TCNode {
 	int SKIPPED = 4;
 	int FAST_FAIL = 5;
 	
+	int REPLACED = 10;
+	
 	long getStartTime();
 	
 	long getEndTime();

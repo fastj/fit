@@ -62,6 +62,7 @@ public class TResult{
 		case TCNode.FAST_FAIL:
 		case TCNode.FAIL : return "FAIL";
 		case TCNode.SKIPPED : return "SKIPPED";
+		case TCNode.REPLACED : return results.get(0).getMessages().get(0);
 		}
 		return "FAIL";
 	}

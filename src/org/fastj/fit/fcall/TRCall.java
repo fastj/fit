@@ -55,7 +55,8 @@ public class TRCall implements IFuncCall{
 		}
 		
 		StepResult closeSr = new StepResult();
-		closeSr.setResult(TCNode.SKIPPED);
+		closeSr.setResult(TCNode.REPLACED);
+		closeSr.addMessage(sr.getMessages().get(0));
 		ctx.getResult().mergeResult(closeSr);
 		
 		LogUtil.info(ctx.getLog().getLog());
