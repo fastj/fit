@@ -50,7 +50,6 @@ public class VerifyTable {
 		return this;
 	}
 	
-	
 	public List<ChkPara> getChkPara()
 	{
 		return table;
@@ -91,7 +90,8 @@ public class VerifyTable {
 					if (vl.isEmpty())
 					{
 						cp.setRealValue("nil");
-					}else
+					}
+					else
 					{
 						table.remove(idx);
 						for (int i = 0 ;i < vl.size(); i++)

@@ -16,6 +16,8 @@
 
 package org.fastj.fit.log;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,7 +34,7 @@ public class LogUtil {
 	
 	public static int level = INFO;
 	
-	private static NodeLogger nlog = new NodeLogger();
+	static NodeLogger nlog = new NodeLogger();
 	
 	public static String date(){
 		return sdf.format(new Date());
@@ -41,6 +43,11 @@ public class LogUtil {
 	public static byte[] getLog()
 	{
 		return nlog.getLog().getBytes();
+	}
+	
+	public void setConsoleOut(OutputStream out){
+		if (out == null) nlog.consoleOut = null;
+		nlog.consoleOut = new PrintStream(out);
 	}
 	
 	public static boolean debug()

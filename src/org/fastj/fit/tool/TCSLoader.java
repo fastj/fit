@@ -18,6 +18,7 @@ package org.fastj.fit.tool;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -264,15 +265,41 @@ public class TCSLoader {
 	
 	public static void loadScripts(File sf, TSuite suite, TProject tproj) throws DataInvalidException
 	{
+		try {
+			ScriptReader sr = new ScriptReader() {
+				BufferedReader br = new BufferedReader(new FileReader(sf));
+				public String readLine() throws Exception {
+					return br.readLine();
+				}
+			};
+			loadScripts(sr, suite, tproj);
+		} catch (FileNotFoundException e) {
+			//ignore
+		}
+	}
+	
+	public static void loadScripts(final List<String> scripts, TSuite suite, TProject tproj) throws DataInvalidException
+	{
+		ScriptReader sr = new ScriptReader() {
+			int idx = 0;
+			public String readLine() throws Exception {
+				return idx < scripts.size() ? scripts.get(idx++) : null;
+			}
+		};
+		loadScripts(sr, suite, tproj);
+	}
+	
+	public static void loadScripts(ScriptReader sr, TSuite suite, TProject tproj) throws DataInvalidException
+	{
 		int lineTag = 0;
 		String line = null;
-		try (BufferedReader br = new BufferedReader(new FileReader(sf))){
+		try {
 			
 			TestCase tcase = null;
 			TestStep step = null;
 			
 			boolean comment = false;
-			while((line = br.readLine()) != null)
+			while((line = sr.readLine()) != null)
 			{
 				lineTag++;
 				line = line.trim();
@@ -350,11 +377,11 @@ public class TCSLoader {
 		} 
 		catch(DataInvalidException de)
 		{
-			LogUtil.error("DataInvalidException {}@{} : {}", sf.getName(), lineTag, line);
+			LogUtil.error("DataInvalidException {}@{} : {}", de.getMessage(), lineTag, line);
 			throw de;
 		}
 		catch (Exception e) {
-			LogUtil.error("Line parse {}:{}, {}@{} : {}", e.getClass().getName(), e.getMessage(), sf.getName(), lineTag, line);
+			LogUtil.error("Line parse {}:{} @{} : {}", e.getClass().getName(), e.getMessage(), lineTag, line);
 		}
 		
 		TestCase tcase = suite.getLast();

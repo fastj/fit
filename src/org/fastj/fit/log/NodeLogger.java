@@ -16,11 +16,14 @@
 
 package org.fastj.fit.log;
 
+import java.io.PrintStream;
+
 import org.fastj.fit.tool.EFormat;
 
 public class NodeLogger {
 	
 	private StringBuilder logBuffer = new StringBuilder();
+	PrintStream consoleOut = LogUtil.nlog == null ? System.out : LogUtil.nlog.consoleOut;
 	
 	public String getLog()
 	{
@@ -88,6 +91,6 @@ public class NodeLogger {
 	private void log(String msg, boolean console)
 	{
 		logBuffer.append(msg).append("\r\n");
-		if (console) System.out.println(msg);
+		if (console && consoleOut != null) consoleOut.println(msg);
 	}
 }

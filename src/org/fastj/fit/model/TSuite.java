@@ -53,7 +53,7 @@ public final class TSuite implements org.fastj.fit.intf.TSuite{
 		}
 	}
 	
-	public static TSuite createV2(String name, int l) throws NumberFormatException
+	public static TSuite createV2(String name, int l)
 	{
 		return new TSuite(name, l);
 	}

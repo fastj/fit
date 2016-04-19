@@ -17,6 +17,7 @@
 package org.fastj.fit.tool;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -441,7 +442,7 @@ public final class TRun {
 		
 	}//TCaseTask
 	
-	private static void runStep(final TestStep step, final TContext ctx, ParameterTable tctable) throws ParamIncertitudeException, DataInvalidException 
+	public static void runStep(final TestStep step, final TContext ctx, ParameterTable tctable) throws ParamIncertitudeException, DataInvalidException 
 	{
 		ParameterTable stepTable = step.getParamTable().copy();
 		ParameterTable ctxTable = ctx.getOuts().copy();
@@ -622,13 +623,21 @@ public final class TRun {
 		long stepStart = System.currentTimeMillis();
 		FuncResponse fresp = CallUtil.run(step, ctx, ptable);
 		
-		if (fresp.getCode() != Response.OK)
+		if (fresp.getCode() == TCNode.REPLACED && fresp.getPhrase().startsWith("REPLACED:")){
+			StepResult sr = new StepResult();
+			sr.setResult(Boolean.valueOf(fresp.getPhrase().substring("REPLACED:".length()).trim()) ? TCNode.PASS : TCNode.FAIL);
+			log.trace("====== Step takes {} msec. Create new TestCase Result ==> {}", sr.getCost(), sr.isPass() ? "PASS" : "FAIL");
+			return sr;
+		}
+		else if (fresp.getCode() != Response.OK)
 		{
 			log.error("CallFail: {}", fresp.getPhrase());
 		}
 		
 		String jsonEntity = JSONHelper.jsonString(fresp.getEntity());
 		ptable.add("_resp_", jsonEntity);
+		//For UI feature
+		ptable.getParent().getParent().add("_resp_", jsonEntity);
 		
 		int cost = (int) (System.currentTimeMillis() - stepStart);
 		
@@ -660,21 +669,10 @@ public final class TRun {
 		{
 			for (TOut to : step.getOutCmdLines())
 			{
-				String name = expend(to.nameExpr, ptable);
-				String path = expend(to.valueExpr, ptable);
+				String nv[] = out(to, ptable, fresp.getEntity(), log);
+				String name = nv[0];
+				String pvalue = nv[1];
 				
-				String pvalue = null;
-				if (path.startsWith("json."))
-				{
-					Object ov = JSONHelper.jsonValue(path, fresp.getEntity());
-					pvalue = ov == null || ov instanceof String ? String.valueOf(ov) : JSONHelper.jsonString(ov);
-				}
-				else
-				{
-					pvalue = path;
-				}
-				
-				log.trace("Out param ===> {} = {}", name, pvalue);
 				if (to.global)
 				{
 					step.getOwner().getProject().getSysVars().add(name, pvalue);
@@ -687,10 +685,30 @@ public final class TRun {
 			}
 		}
 		
-		log.trace("====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "OK" : sr.isBlock() ? "BLOCK" : "FAIL");
+		log.trace("====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "PASS" : sr.isBlock() ? "BLOCK" : "FAIL");
 		NodeLogger nlog = ctx.getLog();
 		nlog.append(log);
 		return sr;
+	}
+	
+	public static String[] out(TOut to, ParameterTable ptable, Map<String, Object> resp, NodeLogger log) throws ParamIncertitudeException, DataInvalidException{
+		String name = expend(to.nameExpr, ptable);
+		String path = expend(to.valueExpr, ptable);
+		
+		String pvalue = null;
+		if (path.startsWith("json."))
+		{
+			Object ov = JSONHelper.jsonValue(path, resp);
+			pvalue = ov == null || ov instanceof String ? String.valueOf(ov) : JSONHelper.jsonString(ov);
+		}
+		else
+		{
+			pvalue = path;
+		}
+		
+		log.trace("Out param ===> {}@{} = {}", name, to.valueExpr, pvalue);
+		
+		return new String[]{name, pvalue};
 	}
 	
 	private static void fillLoopData(StepResult sr, TContext ctx, TestStep tstep, ParameterTable table) throws DataInvalidException, ParamIncertitudeException

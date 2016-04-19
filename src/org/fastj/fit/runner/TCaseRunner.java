@@ -31,7 +31,7 @@ public class TCaseRunner {
 	{
 		TProject tproj = new TProject();
 		try {
-			TSysInit.init(tproj); //changeCL();
+			TSysInit.init(tproj);
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			LogUtil.error("Set ext classloader failed: {}", e.getMessage());
 		}

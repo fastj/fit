@@ -61,7 +61,10 @@ public class TRCall implements IFuncCall{
 		
 		LogUtil.info(ctx.getLog().getLog());
 		
-		return new FuncResponse();
+		FuncResponse fr = new FuncResponse();
+		fr.setCode(TCNode.REPLACED);
+		fr.setPhrase("REPLACED: " + rltExpr);
+		return fr;
 	}
 	
 	
