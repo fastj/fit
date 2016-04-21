@@ -104,7 +104,7 @@ public class CallUtil {
 		
 	}
 	
-	public IFuncCall getFCall(String name)
+	public static IFuncCall getFCall(String name)
 	{
 		return FUNCS.get(name);
 	}

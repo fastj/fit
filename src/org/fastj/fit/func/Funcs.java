@@ -44,6 +44,10 @@ public class Funcs {
 		LogUtil.trace("Load Func [{}]", func.name());
 	}
 	
+	public static String[] getFuncs(){
+		return FUNCS.keySet().toArray(new String[FUNCS.size()]);
+	}
+	
 	public static String runFunc(String fname, List<String> args, ParameterTable table) throws ParamIncertitudeException, DataInvalidException
 	{
 		IFunction func = FUNCS.get(fname);
