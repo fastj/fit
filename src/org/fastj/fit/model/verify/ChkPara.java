@@ -43,6 +43,10 @@ public abstract class ChkPara {
 		return rpath;
 	}
 	
+	public String getOpKey(){
+		return opkey;
+	}
+	
 	public abstract CheckPoint check();
 	
 	public abstract ChkPara copy(String rpath);
@@ -93,5 +97,9 @@ public abstract class ChkPara {
 			return obj.hashCode() == hashCode();
 		}
 		return false;
+	}
+	
+	public String toString(){
+		return String.format("%s %s %s", rpath, opkey, expValue);
 	}
 }

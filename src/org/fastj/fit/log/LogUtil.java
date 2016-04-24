@@ -45,7 +45,7 @@ public class LogUtil {
 		return nlog.getLog().getBytes();
 	}
 	
-	public void setConsoleOut(OutputStream out){
+	public static void setConsoleOut(OutputStream out){
 		if (out == null) nlog.consoleOut = null;
 		nlog.consoleOut = new PrintStream(out);
 	}
