@@ -45,11 +45,7 @@ public class TScriptRunner {
 	public static void run(String ... args) throws DataInvalidException
 	{
 		TProject tproj = new TProject();
-		try {
-			TSysInit.init(tproj); //changeCL();
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			LogUtil.error("Set ext classloader failed: {}", e.getMessage());
-		}
+		TSysInit.loadPlugins(tproj);
 		
 		ParameterTable argTable = new ParameterTable();
 		List<String> filelist = new ArrayList<String>();
@@ -97,7 +93,9 @@ public class TScriptRunner {
 			tproj.getPostProc().end();
 		}
 		
-		System.exit(0);
+		if (!RunMain.embedded){
+			System.exit(0);
+		}
 	}
 	
 	public static void init(TProject tproj, List<String> files, ParameterTable args) throws DataInvalidException

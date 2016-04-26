@@ -30,11 +30,7 @@ public class TCaseRunner {
 	public void run(String[] args) throws DataInvalidException
 	{
 		TProject tproj = new TProject();
-		try {
-			TSysInit.init(tproj);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			LogUtil.error("Set ext classloader failed: {}", e.getMessage());
-		}
+		TSysInit.loadPlugins(tproj);
 		
 		ParameterTable argTable = new ParameterTable();
 		List<String> filelist = new ArrayList<String>();
@@ -147,7 +143,9 @@ public class TCaseRunner {
 			run(teardown);
 		}
 		
-		System.exit(0);
+		if (!RunMain.embedded){
+			System.exit(0);
+		}
 	}
 	
 	private void run(TProject tproj)

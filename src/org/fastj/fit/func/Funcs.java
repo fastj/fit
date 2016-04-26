@@ -41,7 +41,7 @@ public class Funcs {
 	public static void regist(IFunction func)
 	{
 		FUNCS.put(func.name(), func);
-		LogUtil.trace("Load Func [{}]", func.name());
+		LogUtil.debug("Load Func [{}]", func.name());
 	}
 	
 	public static String[] getFuncs(){

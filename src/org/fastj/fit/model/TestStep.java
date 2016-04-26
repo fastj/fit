@@ -291,6 +291,7 @@ public class TestStep{
 		copy.timeout = timeout;
 		copy.vfTable = vfTable.copy();
 		copy.waitfor = waitfor;
+		copy.schedule = schedule != null ? schedule.copy() : null;
 		return copy;
 	}
 	

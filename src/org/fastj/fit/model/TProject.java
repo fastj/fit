@@ -19,6 +19,7 @@ package org.fastj.fit.model;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -141,7 +142,12 @@ public class TProject implements org.fastj.fit.intf.TProject{
 		if (file == null) return null;
 		File d = new File(dir);
 		File res = new File(d, file);
-		return res.exists() ? res : null;
+		File res1 = new File(file);
+		try {
+			return res.exists() ? res : res1.exists() && res1.getCanonicalPath().startsWith(d.getCanonicalPath()) ? res1 : null;
+		} catch (IOException e) {
+			return null;
+		}
 	}
 	
 	public List<File> getProjectFiles()

@@ -44,22 +44,28 @@ import org.fastj.fit.tool.ld.Plugin;
 
 public class TSysInit {
 	
+	public static ClassLoader fitExtLoader = null;
+	
 	private static final InjarURLStreamHandlerFactory INJARFACTORY = new InjarURLStreamHandlerFactory(TSysInit.class.getClassLoader());
 	private static final String EXT_NAME = "lib";
 	private static final String COMMON_ROOT = "/extlib";
 	private static final String COMMON_PREFIX = "extlib/";
 	private static final String PLUGINS_ROOT = "/plugins";
 	private static final String PLUGINS_PREFIX = "plugins/";
-	public static ClassLoader fitExtLoader = null;
+	private static boolean init = false;
 	private static HashMap<String, Plugin> plugins = new HashMap<>();
 	
-	public static void init(TProject tproj) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, DataInvalidException
+	public static void init() throws DataInvalidException
 	{
+		synchronized (TSysInit.class) {
+			if (init) return;
+			init = true;
+		}
+		
 		URL.setURLStreamHandlerFactory(INJARFACTORY);
 		changeCL();
 		walkInJars(COMMON_ROOT, COMMON_PREFIX, false);
 		walkInJars(PLUGINS_ROOT, PLUGINS_PREFIX, true);
-		loadPlugins(tproj);
 	}
 	
 	public static InputStream getResourceStream(String name)
@@ -74,8 +80,10 @@ public class TSysInit {
 		INJARFACTORY.addRes(name, ins);
 	}
 	
-	private static void loadPlugins(TProject tproj) throws DataInvalidException
+	public static void loadPlugins(TProject tproj) throws DataInvalidException
 	{
+		init();
+		
 		for (Plugin plug : plugins.values())
 		{
 			try {
@@ -86,15 +94,19 @@ public class TSysInit {
 		}
 	}
 	
-	private static void changeCL() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
+	private static void changeCL()
 	{
-		ClassLoader curr = Thread.currentThread().getContextClassLoader(); //TScriptRunner.class.getClassLoader();
-		ClassLoader currParent = curr.getParent();
-		fitExtLoader = initBaseCL(EXT_NAME, currParent);
-		
-		Field pf = ClassLoader.class.getDeclaredField("parent");
-		pf.setAccessible(true);
-		pf.set(curr, fitExtLoader);
+		try {
+			ClassLoader curr = Thread.currentThread().getContextClassLoader(); //TScriptRunner.class.getClassLoader();
+			ClassLoader currParent = curr.getParent();
+			fitExtLoader = initBaseCL(EXT_NAME, currParent);
+			
+			Field pf = ClassLoader.class.getDeclaredField("parent");
+			pf.setAccessible(true);
+			pf.set(curr, fitExtLoader);
+		} catch (Throwable e) {
+			LogUtil.error("Load ext lib fail: {}", e.getMessage());
+		}
 	}
 	
 	private static ClassLoader initBaseCL(String dir, ClassLoader parent)

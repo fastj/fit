@@ -52,4 +52,11 @@ public final class Schedule {
 		return interval;
 	}
 
+	public Schedule copy(){
+		Schedule s = new Schedule();
+		s.total = total;
+		s.cntPerloop = cntPerloop;
+		s.interval = interval;
+		return s;
+	}
 }
