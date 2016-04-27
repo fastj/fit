@@ -302,31 +302,30 @@ public final class TRun {
 			}
 			finally
 			{
-				tr.setEnd(System.currentTimeMillis());
-				tc.mergeResult(tr);
-				tr.setLog(nlog.getLog());
-				
 				try {
-					fillLoopData(tr, context, tc, ptable);
-				} catch (DataInvalidException | ParamIncertitudeException e) {
-					nlog.error("TR fillLoopData(InternalERROR): {}", e.getMessage());
+					tr.setEnd(System.currentTimeMillis());
+					tc.mergeResult(tr);
+					tr.setLog(nlog.getLog());
+					try {
+						fillLoopData(tr, context, tc, ptable);
+					} catch (DataInvalidException | ParamIncertitudeException e) {
+						nlog.error("TR fillLoopData(InternalERROR): {}", e.getMessage());
+					}
+					context.closeResources();
+					//log
+					try {
+						nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", expend(tc.getName(), ptable), (System.currentTimeMillis() - start) / 1000., tr.getResultDesc());
+					} catch (ParamIncertitudeException | DataInvalidException e) {
+						nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start) / 1000., tr.getResultDesc());
+					}
+					if (tc.getTid() == null || tc.getTid().indexOf("${") < 0) {
+						tc.append(nlog);
+					} 
+				} finally {
+					cdl.countDown();
 				}
-				context.closeResources();
-				//log
-				try {
-					nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", expend(tc.getName(), ptable), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
-				} catch (ParamIncertitudeException | DataInvalidException e) {
-					nlog.trace("****** TestCase [{}] done, takes {} sec. Result ===> {}", tc.getName(), (System.currentTimeMillis() - start)/1000., tr.getResultDesc());
-				}
-				
-				if (tc.getTid().indexOf("${") < 0)
-				{
-					tc.append(nlog);
-				}
-				
-				cdl.countDown();
 			}
-		}
+		}//run
 		
 		private void run(TestCase tc, ParameterTable tctable, TContext context) throws ParamIncertitudeException, DataInvalidException
 		{
