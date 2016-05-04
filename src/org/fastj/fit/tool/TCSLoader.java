@@ -152,7 +152,9 @@ public class TCSLoader {
 					if (tcf == null) throw new DataInvalidException("Fit Case file not exist: " + tcfStr);
 					
 					loadScripts(tcf, suite, tproj);
-					config(parts, suite.getLast());
+					TestCase tcase = suite.getLast();
+					config(parts, tcase);
+					tcase.getParamTable().add("_tc.dir_", tcf.getParent());
 				}
 			}
 		}

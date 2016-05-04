@@ -592,6 +592,7 @@ public final class TRun {
 		
 		String jsonEntity = JSONHelper.jsonString(fresp.getEntity());
 		ptable.add("_resp_", jsonEntity);
+		ptable.add("_log_", ctx.getLog().getLog());
 		//For UI feature
 		ptable.getParent().getParent().add("_resp_", jsonEntity);
 		

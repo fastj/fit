@@ -23,6 +23,11 @@ public class RunMain {
 			}
 		}
 		
+		if (args != null && args.length > 0){
+			TCaseRunner.main(args);
+			return;
+		}
+		
 		UIRunner.main(args);
 	}
 	
