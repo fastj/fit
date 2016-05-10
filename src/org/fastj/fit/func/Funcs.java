@@ -82,5 +82,6 @@ public class Funcs {
 		regist(new VarCheckFunc());
 		regist(new ChkFunc());
 		regist(new LMatch());
+		regist(new UrLEncode());
 	}
 }
