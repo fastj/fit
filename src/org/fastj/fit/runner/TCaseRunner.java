@@ -105,6 +105,11 @@ public class TCaseRunner {
 			}
 		}
 		
+		for (File aws : tproj.getAWscripts())
+		{
+			TCSLoader.loadAWScripts(aws);
+		}
+		
 		if (setup != null) run(setup);
 		
 		if (!tmodules.isEmpty())
