@@ -29,7 +29,7 @@ import org.fastj.fit.intf.ParamIncertitudeException;
 import org.fastj.fit.intf.ParameterTable;
 
 /**
- * @command read_txt(file_path, [encoding : utf-8])
+ * @command fread(file_path, [encoding : utf-8])
  * 
  * @author zhouqingquan
  *

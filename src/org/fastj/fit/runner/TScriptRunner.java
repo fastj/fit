@@ -52,7 +52,7 @@ public class TScriptRunner {
 		
 		for (String arg : args)
 		{
-			if (arg.startsWith("-P"))
+			if (arg.startsWith("-P") || arg.startsWith("--"))
 			{
 				String pv[] = arg.substring(2).split("=", 2);
 				if (pv.length == 2)

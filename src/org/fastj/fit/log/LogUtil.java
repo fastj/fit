@@ -29,7 +29,7 @@ public class LogUtil {
 	public static final int ERROR = 3;
 	public static final int TRACE = 10;
 	public static final int CLOSE = 16;
-	private static final String DFORMAT = "yyyy-MM-DD HH:mm:ss";
+	private static final String DFORMAT = "yyyy-MM-dd HH:mm:ss";
 	private static final SimpleDateFormat sdf = new SimpleDateFormat(DFORMAT);
 	
 	public static int level = INFO;
