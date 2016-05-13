@@ -19,6 +19,9 @@ package org.fastj.fit.tool.ld;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+
+import org.fastj.fit.log.LogUtil;
 
 public class InjarRes {
 	
@@ -28,9 +31,16 @@ public class InjarRes {
 	
 	public InputStream openStream()
 	{
+		ZipEntry zi = baseJar.getEntry(entry);
+		if (zi == null) {
+			LogUtil.error("Not find entry {} in fit jar.", entry);
+			return null;
+		}
+		
 		try {
-			return baseJar.getInputStream(baseJar.getEntry(entry));
+			return baseJar.getInputStream(zi);
 		} catch (IOException e) {
+			LogUtil.error("Open entry {} fail.", entry);
 			return null;
 		}
 	}

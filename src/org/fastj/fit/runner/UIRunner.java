@@ -10,7 +10,7 @@ import org.fastj.fit.tool.TSysInit;
 
 public class UIRunner {
 	
-	public static void main(String[] args) throws DataInvalidException, ParamIncertitudeException {
+	public static void run(String[] args) throws DataInvalidException, ParamIncertitudeException {
 		TSysInit.loadPlugins(null);
 		Funcs.runFunc("fitUI", new ArrayList<String>(), new ParameterTable());
 	}

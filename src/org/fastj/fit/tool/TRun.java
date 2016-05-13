@@ -244,7 +244,7 @@ public final class TRun {
 				}
 			}
 		} catch (ParamIncertitudeException pe) {
-			// skip expr fail, ignore and go test
+			LogUtil.warn("ParamIncertitudeException when exec skipExpr({}), go test, e={}", tc.getSkipExpr(), pe.getMessage());
 		} catch (Throwable e1) {
 			tc.getNLoggor().warn("===> TestCase [{}] check skipExpr fail and go test: {}", tc.getName(),
 					EFormat.exStrEx(e1, true));

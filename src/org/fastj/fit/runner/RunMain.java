@@ -9,6 +9,11 @@ public class RunMain {
 	
 	public static void main(String[] args) throws DataInvalidException, ParamIncertitudeException {
 		
+		if (args == null || args.length == 0) {
+			UIRunner.run(args);
+			return;
+		}
+		
 		for (String arg : args)
 		{
 			if ("-script".equals(arg))
@@ -18,17 +23,12 @@ public class RunMain {
 			}
 			else if ("-case".equals(arg))
 			{
-				TCaseRunner.main(args);
+				new TCaseRunner().run(args);
 				return;
 			}
 		}
 		
-		if (args != null && args.length > 0){
-			TCaseRunner.main(args);
-			return;
-		}
-		
-		UIRunner.main(args);
+		new TCaseRunner().run(args);
 	}
 	
 }

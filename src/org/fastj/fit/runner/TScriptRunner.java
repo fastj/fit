@@ -38,10 +38,6 @@ import org.fastj.fit.tool.TSysInit;
  */
 public class TScriptRunner {
 	
-	public static void main(String[] args) throws DataInvalidException {
-		run(args);
-	}
-	
 	public static void run(String ... args) throws DataInvalidException
 	{
 		TProject tproj = new TProject();

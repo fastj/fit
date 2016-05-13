@@ -59,18 +59,18 @@ public class JS {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> T val(String cmd)
+	public static <T> T val(String expr)
 	{
 		try {
-			Object o = engine.eval(cmd);
+			Object o = engine.eval(expr);
 			return (T) o;
 		} catch (ScriptException e) {
-			LogUtil.error("JSRun cmd fail: {}", e, cmd);
+			LogUtil.error("JSRun cmd fail: {}", e, expr);
 			return null;
 		}
 		catch (Throwable e)
 		{
-			LogUtil.error("JSRun cmd fail: {}", e, cmd);
+			LogUtil.error("JSRun cmd fail: {}", e, expr);
 			return null;
 		}
 	}

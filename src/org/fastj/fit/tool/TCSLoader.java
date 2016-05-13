@@ -137,7 +137,7 @@ public class TCSLoader {
 					continue;
 				}
 				
-				if (line.indexOf(".fitc") > -1 /*&& "rasthl".indexOf(line.charAt(0)) > -1*/)
+				if (line.indexOf(".fitc") > -1)
 				{
 					if (suite == null)
 					{
@@ -276,7 +276,7 @@ public class TCSLoader {
 			};
 			loadScripts(sr, suite, tproj);
 		} catch (FileNotFoundException e) {
-			//ignore
+			LogUtil.error("Fit script file not find: " + sf.getName());
 		}
 	}
 	
@@ -442,17 +442,37 @@ public class TCSLoader {
 		
 		switch (fname) {
 		case "block":
-			step.setTestStage(Consts.TSTAGE_PRE);
+			if (step != null){
+				step.setTestStage(Consts.TSTAGE_PRE);
+			}
+			else {
+				throw new DataInvalidException("Invalid block() setting @" + lineTag);
+			}
 			break;
 		case "teardown":
-			step.setTestStage(Consts.TSTAGE_TEARDOWN);
+			if (step != null){
+				step.setTestStage(Consts.TSTAGE_TEARDOWN);
+			}
+			else {
+				throw new DataInvalidException("Invalid teardown() setting @" + lineTag);
+			}
 			break;
 		case "g_out":
 		case "out": 
-			step.addOut(fbody.trim(), true);
+			if (step != null) {
+				step.addOut(fbody.trim(), true);
+			}
+			else {
+				throw new DataInvalidException("Invalid out() setting @" + lineTag);
+			}
 			break;
 		case "l_out":
-			step.addOut(fbody.trim(), false);
+			if (step != null) {
+				step.addOut(fbody.trim(), false);
+			}
+			else {
+				throw new DataInvalidException("Invalid l_out() setting @" + lineTag);
+			}
 			break;
 		case "chk": 
 			String [] pars = readFuncParam(fbody);
@@ -461,7 +481,7 @@ public class TCSLoader {
 				pars = readFuncParam(fbody, ' ');
 			}
 			
-			if (pars.length >= 3)
+			if (pars.length >= 3 && step != null)
 			{
 				String ff[] = new String[pars.length - 3];
 				for (int i = 0; i < ff.length; i++)
@@ -477,7 +497,7 @@ public class TCSLoader {
 			break;
 		case "waitfor":
 			String [] tpars = fbody.split(",");
-			if (tpars.length <= 3)
+			if (tpars.length <= 3 && step != null)
 			{
 				try {
 					step.setWaitfor(Integer.valueOf(trim(expend(tpars[0], step.getParamTable()))));
@@ -494,9 +514,14 @@ public class TCSLoader {
 			break;
 		case "delay":
 			try {
-				step.setDelay(Integer.valueOf(trim(expend(fbody, step.getParamTable()))));
+				if (step != null) {
+					step.setDelay(Integer.valueOf(trim(expend(fbody, step.getParamTable()))));
+				}
+				else {
+					throw new DataInvalidException("Invalid delay() @line:" + lineTag);
+				}
 			} catch (NumberFormatException e) {
-				throw new DataInvalidException("Invalid delay @line:" + lineTag);
+				throw new DataInvalidException("Invalid delay() @line:" + lineTag);
 			}
 			break;
 		case "loop":
@@ -544,7 +569,7 @@ public class TCSLoader {
 			{
 				step.setAsync(true);
 			}
-			else
+			else if (tcase != null)
 			{
 				String lvStr = trim(expend(fbody, tcase.getParamTable()));
 				if (lvStr.isEmpty())
@@ -558,6 +583,8 @@ public class TCSLoader {
 					tcase.getParamTable().add("level_wait", lv);
 				}
 			}
+			else
+				throw new DataInvalidException("Cannot set testcase property in AW scripts.");
 			break;
 		}
 		case "schedule":
@@ -680,7 +707,14 @@ public class TCSLoader {
 				if (line.matches(Consts.STEP_FUNC_PATTERRN))
 				{
 					tstep = new TestStep();
-					mstep.addStep(tstep);
+					
+					if (mstep != null) {
+						mstep.addStep(tstep);
+					}
+					else {
+						throw new DataInvalidException("Invalid Step line(before DEF) in file " + awFile + "@" + lineTag);
+					}
+					
 					tstep.setFuncCmd(line.substring(1));
 					continue;
 				}
@@ -696,8 +730,7 @@ public class TCSLoader {
 				parseParaLine(line, null, tstep, lineTag);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			LogUtil.error("Load aws fail: {}", e.getMessage());
+			LogUtil.error("Load aws fail: e={}, line={}", e.getMessage(), lineTag);
 		}
 	}//End of loadConsts()
 	

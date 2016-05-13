@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import org.fastj.fit.log.LogUtil;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
@@ -59,7 +60,9 @@ public final class JdomHelper {
 		
 		try (FileOutputStream fos = new FileOutputStream(file);){
 			out.output(doc, fos);
-		} catch (Throwable e) {}
+		} catch (Throwable e) {
+			LogUtil.error("Write doc fail : e={}", e.getMessage());
+		}
 	}
 	
 	/**

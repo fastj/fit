@@ -23,10 +23,6 @@ public class TCaseRunner {
 	private TProject teardown = null;
 	private List<TProject> tmodules = new ArrayList<>();
 	
-	public static void main(String[] args) throws DataInvalidException {
-		new TCaseRunner().run(args);
-	}
-	
 	public void run(String[] args) throws DataInvalidException
 	{
 		TProject tproj = new TProject();
@@ -127,7 +123,7 @@ public class TCaseRunner {
 						try {
 							TCaseRunner.this.run(tp);
 						} catch (Throwable e) {
-							e.printStackTrace();
+							LogUtil.error("Run inner project fail: e={}", e.getMessage());
 						}
 						cdl.countDown();
 					}

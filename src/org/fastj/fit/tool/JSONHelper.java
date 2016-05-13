@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.fastj.fit.intf.DataInvalidException;
+import org.fastj.fit.log.LogUtil;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -93,6 +94,7 @@ public class JSONHelper {
 		try {
 			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
 		} catch (Throwable e) {
+			LogUtil.error("GetJSON fail: e={}", e.getMessage());
 		}
 		return null;
 	}

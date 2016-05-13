@@ -86,13 +86,13 @@ public class VerifyTable {
 				if (path.contains("[loop()]"))
 				{
 					String rpath = path;
-					List<?> vl = (List<?>) v;
-					if (vl.isEmpty())
+					if (v == null || "nil".equals(v) || !(v instanceof List<?>))
 					{
 						cp.setRealValue("nil");
 					}
 					else
 					{
+						List<?> vl = (List<?>) v;
 						table.remove(idx);
 						for (int i = 0 ;i < vl.size(); i++)
 						{
@@ -105,21 +105,24 @@ public class VerifyTable {
 				}
 				else if (path.contains("[find()]"))
 				{
-					List<?> vl = (List<?>) v;
-					if (vl.isEmpty())
+					if (v == null || "nil".equals(v) || !(v instanceof List<?>))
 					{
 						cp.setRealValue("nil");
-					}else
-					for (int i = 0 ;i < vl.size(); i++)
-					{
-						cp.setRealValue(String.valueOf(vl.get(i)));
-						if (cp.check().isPass()) break;
+					}else{
+						List<?> vl = (List<?>) v;
+						for (int i = 0 ;i < vl.size(); i++)
+						{
+							cp.setRealValue(String.valueOf(vl.get(i)));
+							if (cp.check().isPass()) break;
+						}
 					}
 				}
 				else
 				{
 					cp.setRealValue(String.valueOf(v));
 				}
+				
+				continue;
 			}
 			else if (path.startsWith("xpath."))
 			{

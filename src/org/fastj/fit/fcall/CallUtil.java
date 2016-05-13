@@ -72,11 +72,21 @@ public class CallUtil {
 			return false;
 		}
 		
-		if (!AWS.containsKey(func)) throw new ParamIncertitudeException("Func " + func + " is not registed.");
+		if (!AWS.containsKey(func)) throw new ParamIncertitudeException("AW " + func + " is not registed.");
 		
 		return true;
 	}
 	
+	/**
+	 * Run FunctionCall (Only FCall)
+	 * 
+	 * @param step
+	 * @param ctx
+	 * @param table
+	 * @return FuncResponse
+	 * @throws ParamIncertitudeException
+	 * @throws DataInvalidException
+	 */
 	public static FuncResponse run(TestStep step, TContext ctx, ParameterTable table) throws ParamIncertitudeException, DataInvalidException
 	{
 		String fcmd = step.getFuncCmd();
@@ -94,14 +104,7 @@ public class CallUtil {
 			return fr;
 		}
 		
-		MStep mstep = AWS.get(func);
-		if (mstep != null)
-		{
-			return null;
-		}
-		
 		throw new ParamIncertitudeException("Func " + func + " is not registed.");
-		
 	}
 	
 	public static IFuncCall getFCall(String name)

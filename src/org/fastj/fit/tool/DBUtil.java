@@ -44,7 +44,6 @@ public class DBUtil {
 		try {
 			c = getDbConn(dbUrl, user, pass);
 		} catch (Throwable e) {
-			e.printStackTrace();
 			HashMap<String, Object> rlt = new HashMap<>();
 			rlt.put("code", 1);
 			rlt.put("message", e.getClass().getName() + ": " + e.getMessage());
@@ -59,8 +58,8 @@ public class DBUtil {
 			return rlt;
 		}
 		
-		try {
-			PreparedStatement ps =  c.prepareStatement(sql);
+		try (PreparedStatement ps =  c.prepareStatement(sql)) {
+			
 			if (sql.startsWith("select"))
 			{
 				ResultSet rs = ps.executeQuery();

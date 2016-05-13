@@ -97,7 +97,13 @@ public class TSysInit {
 	private static void changeCL()
 	{
 		try {
-			ClassLoader curr = Thread.currentThread().getContextClassLoader(); //TScriptRunner.class.getClassLoader();
+			ClassLoader curr = Thread.currentThread().getContextClassLoader();
+			
+			if (curr == null) {
+				LogUtil.error("Load fit ext classloader fail: no ctx classloader");
+				return;
+			}
+			
 			ClassLoader currParent = curr.getParent();
 			fitExtLoader = initBaseCL(EXT_NAME, currParent);
 			
@@ -142,6 +148,7 @@ public class TSysInit {
 				}
 			}
 		} catch (Throwable e) {
+			LogUtil.error("Load fit jars fail(0): {}", e.getMessage());
 		}
 	}
 	
@@ -175,6 +182,7 @@ public class TSysInit {
 					try {
 						jins.close();
 					} catch (IOException e) {
+						LogUtil.error("Close jar input fail: e={}", e.getMessage());
 					}
 				}
 				if (jin != null)
@@ -182,6 +190,7 @@ public class TSysInit {
 					try {
 						jin.close();
 					} catch (IOException e) {
+						LogUtil.error("Close jar input fail: e={}", e.getMessage());
 					}
 				}
 			}
@@ -211,6 +220,7 @@ public class TSysInit {
 				}
 			}
 		} catch (Throwable e) {
+			LogUtil.error("Load fit jars fail: e={}:{}", e.getClass(), e.getMessage());
 		}
 	}
 	
@@ -244,6 +254,7 @@ public class TSysInit {
 					try {
 						urls.add(jf.toURI().toURL());
 					} catch (MalformedURLException e) {
+						LogUtil.error("WalkDir fail: file={}, e={}", jf.getName(), e.getMessage());
 					}
 				}
 			}

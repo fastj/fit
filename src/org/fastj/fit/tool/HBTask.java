@@ -76,6 +76,7 @@ public class HBTask extends TimerTask{
 			try {
 				TRun.run(tp, hb, null);
 			} catch (ParamIncertitudeException | DataInvalidException e) {
+				LogUtil.error("HeartBeat(b) fail: e={}", e.getMessage());
 			}
 			finally
 			{
@@ -87,6 +88,7 @@ public class HBTask extends TimerTask{
 			try {
 				TRun.run(tp, hb, null);
 			} catch (ParamIncertitudeException | DataInvalidException e) {
+				LogUtil.error("HeartBeat fail: e={}", e.getMessage());
 			}
 		}
 		
