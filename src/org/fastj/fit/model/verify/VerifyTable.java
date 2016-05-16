@@ -83,6 +83,7 @@ public class VerifyTable {
 			if (path.startsWith("json."))
 			{
 				v = JSONHelper.jsonValue(path, jo);
+				cp.expends(ptable);
 				if (path.contains("[loop()]"))
 				{
 					String rpath = path;
@@ -101,7 +102,6 @@ public class VerifyTable {
 							table.add(ncp);
 						}
 					}
-					
 				}
 				else if (path.contains("[find()]"))
 				{

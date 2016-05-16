@@ -328,6 +328,7 @@ public class TCSLoader {
 					{
 						tcase.valid();
 						tcase.initTStage();
+						LogUtil.trace("=====> Loaded case {}", tcase.getTid());
 						tcase = null;
 						step = null;
 					}
