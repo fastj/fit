@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.fastj.fit.intf.DataInvalidException;
+import org.fastj.fit.log.LogUtil;
 
 /**
  * 数据库操作，结果为json结构
@@ -120,6 +121,7 @@ public class DBUtil {
 		try {
 			c.close();
 		} catch (Throwable e) {
+			LogUtil.error("Release DBconn fail: e={}", e.getMessage());
 		}
 	}
 	

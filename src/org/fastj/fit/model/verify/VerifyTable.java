@@ -78,12 +78,12 @@ public class VerifyTable {
 		for (int idx = table.size() - 1; idx >= 0; idx--)
 		{
 			ChkPara cp = table.get(idx);
+			cp.expends(ptable);
 			Object v = null;
 			String path = StringUtil.expend(cp.getPath(), ptable);
 			if (path.startsWith("json."))
 			{
 				v = JSONHelper.jsonValue(path, jo);
-				cp.expends(ptable);
 				if (path.contains("[loop()]"))
 				{
 					String rpath = path;
@@ -119,7 +119,8 @@ public class VerifyTable {
 				}
 				else
 				{
-					cp.setRealValue(String.valueOf(v));
+					String pv = v == null || v instanceof String ? String.valueOf(v) : JSONHelper.jsonString(v);
+					cp.setRealValue(pv);
 				}
 				
 				continue;
@@ -133,9 +134,7 @@ public class VerifyTable {
 				v = path;
 			}
 			
-			String pv = v == null || v instanceof String ? String.valueOf(v) : JSONHelper.jsonString(v);
-			cp.setRealValue(String.valueOf(pv));
-			cp.expends(ptable);
+			cp.setRealValue(String.valueOf(v));
 		}
 	}
 	

@@ -68,9 +68,7 @@ public final class ParameterTable {
 		else
 		{
 			p = Parameter.by(pname);
-			//value == null means invalid
 			p.setValue(pvalue).setDesc(desc);
-			if (p != null)
 			table.add(p);
 		}
 		return this;
@@ -88,7 +86,6 @@ public final class ParameterTable {
 		{
 			p = Parameter.by(pname);
 			p.setValue(pvalue);
-			if (p != null)
 			table.add(p);
 		}
 		

@@ -81,7 +81,7 @@ public abstract class ChkPara {
 		return fastFails;
 	}
 
-	public void setFastFails(String[] fastFails) {
+	public void setFastFails(String[] fastFails) throws DataInvalidException {
 		this.fastFails = fastFails;
 	}
 

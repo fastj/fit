@@ -31,9 +31,16 @@ public class INPara extends ChkPara{
 	private List<String> exps = new ArrayList<String>();
 	private List<String> ffail = new ArrayList<>();
 	
-	public INPara(String name, String expValue) {
+	public INPara(String name, String expValue) throws DataInvalidException {
 		super(expValue, "in", expValue);
 		splits(exps, expValue);
+	}
+	
+	public INPara(INPara in) {
+		super(in.rpath, "in", in.expValue);
+		this.fastFails = in.fastFails;
+		this.exps.addAll(in.exps);
+		this.ffail.addAll(in.ffail);
 	}
 
 	@Override
@@ -48,12 +55,15 @@ public class INPara extends ChkPara{
 	
 	public ChkPara copy(String rp)
 	{
-		INPara ip = new INPara(rp != null ? rp : rpath, expValue);
+		INPara ip = new INPara(this);
+		if (rp != null) {
+			ip.rpath = rp;
+		}
 		return ip;
 	}
 
 	@Override
-	public void setFastFails(String[] fastFails) {
+	public void setFastFails(String[] fastFails) throws DataInvalidException {
 		super.setFastFails(fastFails);
 		for (String s : fastFails)
 		{
@@ -77,18 +87,14 @@ public class INPara extends ChkPara{
 		this.ffail = uffail;
 	}
 	
-	public static void splits(List<String> l, String v)
+	public static void splits(List<String> l, String v) throws DataInvalidException
 	{
 		String vstr = v.startsWith("[") ? v.substring(1) : v;
 		vstr = vstr.endsWith("]") ? vstr.substring(0, vstr.length() - 1) : vstr;
 		
-		try {
-			String[] paras = StringUtil.readFuncParam(v);
-			for(String p : paras)
-			{
-				l.add(p);
-			}
-		} catch (DataInvalidException e) {
+		String[] paras = StringUtil.readFuncParam(v);
+		for (String p : paras) {
+			l.add(p);
 		}
 	}
 }

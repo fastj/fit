@@ -31,11 +31,18 @@ public class NINPara extends ChkPara{
 	private List<String> exps = new ArrayList<String>();
 	private List<String> ffail = new ArrayList<>();
 	
-	public NINPara(String name, String expValue) {
+	public NINPara(String name, String expValue) throws DataInvalidException {
 		super(name,"!in", expValue);
 		INPara.splits(exps, expValue);
 	}
 
+	public NINPara(NINPara nin) {
+		super(nin.rpath, "!in", nin.expValue);
+		this.fastFails = nin.fastFails;
+		this.exps.addAll(nin.exps);
+		this.ffail.addAll(nin.ffail);
+	}
+	
 	@Override
 	public CheckPoint check() {
 		CheckPoint cp = new CheckPoint();
@@ -47,7 +54,7 @@ public class NINPara extends ChkPara{
 	}
 	
 	@Override
-	public void setFastFails(String[] fastFails) {
+	public void setFastFails(String[] fastFails) throws DataInvalidException {
 		super.setFastFails(fastFails);
 		for (String s : fastFails)
 		{
@@ -73,7 +80,10 @@ public class NINPara extends ChkPara{
 	
 	public ChkPara copy(String rp)
 	{
-		NINPara pp = new NINPara(rp != null ? rp : rpath, expValue);
+		NINPara pp = new NINPara(this);
+		if (rp != null) {
+			pp.rpath = rp;
+		}
 		return pp;
 	}
 
