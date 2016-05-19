@@ -16,6 +16,7 @@
 
 package org.fastj.fit.tool;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +29,7 @@ import org.fastj.fit.fcall.CallUtil;
 import org.fastj.fit.intf.DataInvalidException;
 import org.fastj.fit.intf.FuncResponse;
 import org.fastj.fit.intf.ParamIncertitudeException;
+import org.fastj.fit.intf.Parameter;
 import org.fastj.fit.intf.ParameterTable;
 import org.fastj.fit.intf.PerfStat;
 import org.fastj.fit.intf.Response;
@@ -404,7 +406,11 @@ public final class TRun {
 		ParameterTable ctxTable = ctx.getOuts().copy();
 		ctxTable.setParent(stepTable);
 		stepTable.setParent(tctable);
-		List<ParameterTable> stl = splits(ctxTable, splits(step.getLoopVars(), false));
+		String lvars[] = splits(step.getLoopVars(), false);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		for (String key : lvars) map.put(key, key);
+		ctx.put("__M" + step.getLoopVars(), map);
+		List<ParameterTable> stl = splits(ctxTable, lvars);
 
 		Schedule schedule = step.getSchedule();
 		if (schedule != null) schedule.setTotal(stl.size());
@@ -577,6 +583,7 @@ public final class TRun {
 		NodeLogger log = new NodeLogger();
 		log.trace("====== Start run step ===> {}", step.getFuncCmd());
 		long stepStart = System.currentTimeMillis();
+		updateCtx(ctx, ptable, step.getLoopVars());
 		FuncResponse fresp = CallUtil.run(step, ctx, ptable);
 		
 		if (fresp.getCode() == TCNode.REPLACED && fresp.getPhrase().startsWith("REPLACED:")){
@@ -776,6 +783,15 @@ public final class TRun {
 		}
 		
 		return readFuncParam(loopVars);
+	}
+	
+	private static void updateCtx(TContext ctx, ParameterTable table, String lvars) throws DataInvalidException {
+		HashMap<String, Object> map = ctx.get("__M" + lvars);
+		for (Parameter p : ctx.getOuts().gets()) {
+			if (map == null || !map.containsKey(p.getName())) {
+				table.add(p.getName(), p.getValue());
+			}
+		}
 	}
 	
 	private static class TcaseScheduleTask implements Runnable, ScheduleTask

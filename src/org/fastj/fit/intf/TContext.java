@@ -79,29 +79,37 @@ public class TContext {
 
 	public void put(String key, Object value)
 	{
-		Object obj = context.remove(key);
-		if (obj != null && obj instanceof ICloseable)
-		{
-			String id = "removed-" + System.currentTimeMillis();
-			context.put(id, obj);
+		synchronized (context) {
+			Object obj = context.remove(key);
+			if (obj != null && obj instanceof ICloseable) {
+				String id = "removed-" + System.currentTimeMillis();
+				context.put(id, obj);
+			}
+			context.put(key, value);
 		}
-		context.put(key, value);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> T get(String key)
 	{
-		return (T) context.get(key);
+		synchronized (context) {
+			return (T) context.get(key);
+		}
 	}
 	
 	public boolean contains(String key)
 	{
-		return context.containsKey(key);
+		synchronized (context) {
+			return context.containsKey(key);
+		}
 	}
 	
 	public void closeResource(String id)
 	{
-		Object ref = context.remove(id);
+		Object ref = null;
+		synchronized (context) {
+			ref = context.remove(id);
+		}
 		if (ref != null && ref instanceof ICloseable)
 		{
 			try {
@@ -114,17 +122,17 @@ public class TContext {
 	
 	public void closeResources()
 	{
-		Iterator<Entry<String, Object>> iter = context.entrySet().iterator();
-		while (iter.hasNext())
-		{
-			Object obj = iter.next().getValue();
-			if (obj instanceof ICloseable)
-			{
-				iter.remove();
-				try {
-					((ICloseable) obj).close();
-				} catch (Throwable e) {
-					LogUtil.error("Auto close resource fail", e);
+		synchronized (context) {
+			Iterator<Entry<String, Object>> iter = context.entrySet().iterator();
+			while (iter.hasNext()) {
+				Object obj = iter.next().getValue();
+				if (obj instanceof ICloseable) {
+					iter.remove();
+					try {
+						((ICloseable) obj).close();
+					} catch (Throwable e) {
+						LogUtil.error("Auto close resource fail", e);
+					}
 				}
 			}
 		}
@@ -146,7 +154,9 @@ public class TContext {
 	
 	public void addSchedule(ScheduleTask task)
 	{
-		stasks.add(task);
+		synchronized (stasks) {
+			stasks.add(task);
+		}
 	}
 	
 	public void rmvSchedule(ScheduleTask task)
@@ -158,7 +168,12 @@ public class TContext {
 	
 	public void waitComplete()
 	{
-		while(!stasks.isEmpty()){
+		while(true){
+			synchronized (stasks) {
+				if (stasks.isEmpty()) {
+					break;
+				}
+			}
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

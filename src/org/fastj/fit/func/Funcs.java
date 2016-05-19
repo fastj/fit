@@ -83,5 +83,9 @@ public class Funcs {
 		regist(new ChkFunc());
 		regist(new LMatch());
 		regist(new UrLEncode());
+		regist(new WriteFile());
+		regist(new ForFunc());
+		regist(new SortDataFunc());
+		regist(new OutFunc());
 	}
 }

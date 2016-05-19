@@ -92,7 +92,7 @@ public abstract class ChkPara {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (/*obj instanceof String || */obj instanceof ChkPara)
+		if (obj instanceof ChkPara)
 		{
 			return obj.hashCode() == hashCode();
 		}

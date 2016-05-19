@@ -80,17 +80,23 @@ public class NodeLogger {
 	
 	public void append(String msg)
 	{
-		logBuffer.append(msg).append("\r\n");
+		synchronized (logBuffer) {
+			logBuffer.append(msg).append("\r\n");
+		}
 	}
 	
 	public void append(NodeLogger nlog)
 	{
-		logBuffer.append(nlog.logBuffer).append("\r\n");
+		synchronized (logBuffer) {
+			logBuffer.append(nlog.logBuffer).append("\r\n");
+		}
 	}
 	
 	private void log(String msg, boolean console)
 	{
-		logBuffer.append(msg).append("\r\n");
+		synchronized (logBuffer) {
+			logBuffer.append(msg).append("\r\n");
+		}
 		if (console && consoleOut != null) consoleOut.println(msg);
 	}
 }

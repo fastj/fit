@@ -17,6 +17,7 @@
 package org.fastj.fit.intf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.fastj.fit.log.LogUtil;
@@ -50,12 +51,14 @@ public final class ParameterTable {
 	
 	public boolean isEmpty()
 	{
-		return table.isEmpty();
+		synchronized (table) {
+			return table.isEmpty();
+		}
 	}
 	
 	public List<Parameter> gets()
 	{
-		return table;
+		return Collections.synchronizedList(table);
 	}
 	
 	public synchronized ParameterTable add(String pname, String pvalue, String desc)
@@ -69,7 +72,9 @@ public final class ParameterTable {
 		{
 			p = Parameter.by(pname);
 			p.setValue(pvalue).setDesc(desc);
-			table.add(p);
+			synchronized (table) {
+				table.add(p);
+			}
 		}
 		return this;
 	}
@@ -86,7 +91,9 @@ public final class ParameterTable {
 		{
 			p = Parameter.by(pname);
 			p.setValue(pvalue);
-			table.add(p);
+			synchronized (table) {
+				table.add(p);
+			}
 		}
 		
 		return this;
@@ -123,15 +130,14 @@ public final class ParameterTable {
 	{
 		if (name == null) return null;
 		
-		for (Parameter p : table)
-		{
-			if (p == null)
-			{
-				LogUtil.warn("ERROR list p= null: " + table) ;
-			}
-			if (p != null && p.getName().equals(name))
-			{
-				return p;
+		synchronized (table) {
+			for (Parameter p : table) {
+				if (p == null) {
+					LogUtil.warn("ERROR list p= null: " + table);
+				}
+				if (p != null && p.getName().equals(name)) {
+					return p;
+				}
 			}
 		}
 		
@@ -164,9 +170,10 @@ public final class ParameterTable {
 		ParameterTable ptable = new ParameterTable();
 		ptable.setParent(parent);
 		
-		for (Parameter p : table)
-		{
-			ptable.add(p.getName(), p.getValue());
+		synchronized (table) {
+			for (Parameter p : table) {
+				ptable.add(p.getName(), p.getValue());
+			}
 		}
 		
 		return ptable;
@@ -178,9 +185,10 @@ public final class ParameterTable {
 	 */
 	public void addAll(final ParameterTable adds)
 	{
-		for (final Parameter p : adds.table)
-		{
-			add(p.getName(), p.getValue());
+		synchronized (adds.table) {
+			for (final Parameter p : adds.table) {
+				add(p.getName(), p.getValue());
+			}
 		}
 	}
 	
