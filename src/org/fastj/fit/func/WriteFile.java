@@ -46,7 +46,7 @@ public class WriteFile implements IFunction{
 		
 		if (args == null || args.length < 2)
 		{
-			throw new DataInvalidException("Func [read_txt] requires 2 parameters.");
+			throw new DataInvalidException("Func[fwrite] requires 2 parameters.");
 		}
 		
 		String path = trim(expend(args[0], table));

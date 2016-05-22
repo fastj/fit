@@ -1,6 +1,7 @@
 package org.fastj.fit.func;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.fastj.fit.intf.DataInvalidException;
 import org.fastj.fit.intf.IFunction;
@@ -35,22 +36,26 @@ public class SortDataFunc implements IFunction{
 		String data = StringUtil.expend(args[0], table);
 		String op = args.length == 2 ? StringUtil.expend(args[1], table) : ASC;
 		
-		double[] dl = parse(data);
+		String[] dl = parse(data);
 		
-		Arrays.sort(dl);
+		Arrays.sort(dl, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return Double.valueOf(o1) > Double.valueOf(o2) ? 1 : -1;
+			}
+		});
 		if (ASC.equals(op.toLowerCase())){
 			return format(dl);
 		}
 		
 		for (int i = 0; i < dl.length/2 ; i++){
-			double t = dl[i];
-			dl[i] = dl[dl.length - i];
-			dl[dl.length - i] = t;
+			String t = dl[i];
+			dl[i] = dl[dl.length - i - 1];
+			dl[dl.length - i - 1] = t;
 		}
 		return format(dl);
 	}
 	
-	private String format(double [] dl) {
+	private String format(String [] dl) {
 		StringBuilder buff = new StringBuilder();
 		buff.append("@data:");
 		if (dl.length > 0) {
@@ -64,22 +69,12 @@ public class SortDataFunc implements IFunction{
 		return buff.toString();
 	}
 	
-	private double[] parse(String data) throws DataInvalidException{
+	private String[] parse(String data) throws DataInvalidException{
 		if (data.startsWith("@data:")) {
 			data = data.substring(6);
 		}
-		
-		String [] pars = StringUtil.readCmdParam(data);
-		double rlt [] = new double[pars.length];
-		for (int i = 0; i < rlt.length; i++) {
-			try {
-				rlt[i] = Double.valueOf(pars[i].trim());
-			} catch (NumberFormatException e) {
-				throw new DataInvalidException(rlt[i] + " is not a number.");
-			}
-		}
-		
-		return rlt;
+		String [] pars = StringUtil.readFuncParam(data);
+		return pars;
 	}
 
 }

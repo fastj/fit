@@ -41,7 +41,7 @@ public class ForFunc implements IFunction{
 		}
 		
 		List<String> vvs = new ArrayList<>();
-		parseList(vvs, pars[0], ptable);
+		parseList(vvs, StringUtil.expend(pars[1], ptable), ptable);
 		String expr = args[1];
 		
 		for (String var : vvs) {
@@ -57,7 +57,7 @@ public class ForFunc implements IFunction{
 		String lstr = StringUtil.expend(list, table).trim();
 		if (lstr.startsWith("@data:")) {
 			lstr = lstr.substring(6);
-			String [] vs = StringUtil.readCmdParam(lstr);
+			String [] vs = StringUtil.readFuncParam(lstr);
 			for (String v : vs) l.add(v);
 			return;
 		}
@@ -68,7 +68,7 @@ public class ForFunc implements IFunction{
 		
 		lstr = lstr.substring(1, lstr.length() - 1).trim();
 		if (lstr.contains(",")) {
-			String [] vs = StringUtil.readCmdParam(lstr);
+			String [] vs = StringUtil.readFuncParam(lstr);
 			for (String v : vs) l.add(v);
 			return;
 		}
