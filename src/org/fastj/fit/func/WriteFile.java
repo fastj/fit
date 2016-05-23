@@ -53,8 +53,6 @@ public class WriteFile implements IFunction{
 		String value = expend(args[1], table);
 		File f = new File(path);
 		
-		if (!f.exists()) return "file_not_exist";
-		
 		String encoding = args.length == 3 ? trim(expend(args[2], table)) : "utf-8";
 		
 		try (FileOutputStream fout = new FileOutputStream(f);) {

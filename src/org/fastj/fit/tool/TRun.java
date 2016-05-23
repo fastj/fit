@@ -544,11 +544,13 @@ public final class TRun {
 			long endTime = System.currentTimeMillis() + waitfor;
 			if (!CallUtil.isMStep(step.getFuncCmd()))
 			{
+				String lcondition = step.getLoopCondition();
 				do
 				{
 					StepResult sr = stepFuncRun(step, ctx, tcenv);
-					
-					if (sr.isPass() || sr.isBlock() || sr.isFastFail() || System.currentTimeMillis() >= endTime)
+					boolean nextLoop = lcondition == null || (boolean) JS.val(expend(lcondition, tcenv));
+					if (sr.isPass() || sr.isBlock() || sr.isFastFail() 
+							|| (System.currentTimeMillis() + step.getInternal()) >= endTime || !nextLoop)
 					{
 						fillLoopData(sr, ctx, step, ptable);
 						step.mergeSResult(sr);
@@ -556,18 +558,8 @@ public final class TRun {
 						break;
 					}
 					
-					String lcondition = step.getLoopCondition();
-					if (lcondition == null || (boolean) JS.val(expend(lcondition, tcenv)))
-					{
-						sleep(step.getInternal());
-						continue;
-					}
-					else
-					{
-						break;
-					}
-					
-				}while(endTime > System.currentTimeMillis());
+					sleep(step.getInternal());
+				}while(true);
 			}
 			else
 			{

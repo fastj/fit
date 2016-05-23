@@ -58,10 +58,12 @@ public final class ParameterTable {
 	
 	public List<Parameter> gets()
 	{
-		return Collections.synchronizedList(table);
+		synchronized (table) {
+			return Collections.synchronizedList(table);
+		}
 	}
 	
-	public synchronized ParameterTable add(String pname, String pvalue, String desc)
+	public ParameterTable add(String pname, String pvalue, String desc)
 	{
 		Parameter p = get(pname, false);
 		if (p != null)  //update value
@@ -79,7 +81,7 @@ public final class ParameterTable {
 		return this;
 	}
 	
-	public synchronized ParameterTable add(String pname, String pvalue)
+	public ParameterTable add(String pname, String pvalue)
 	{
 		Parameter p = get(pname, false);
 		if (p != null)

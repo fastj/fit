@@ -27,7 +27,9 @@ public class NodeLogger {
 	
 	public String getLog()
 	{
-		return logBuffer.toString();
+		synchronized (logBuffer) {
+			return logBuffer.toString();
+		}
 	}
 	
 	public void debug(String msg, Object ... args)
