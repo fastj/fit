@@ -49,7 +49,7 @@ public class NINPara extends ChkPara{
 		boolean eq = !exps.contains(this.realValue);
 		boolean ff = !ffail.contains(this.realValue);
 		cp.setResultCode(eq ? Consts.PASS : ff ? Consts.FAST_FAIL : Consts.FAIL);
-		cp.setMessages(String.format("[%s] NIN [%s] : %s", realValue, expValue, cp.isPass() ? "PASS" : "FAIL"));
+		cp.setMessages(String.format("[%s] NIN [%s] : %s", realValue, expValue, cp.statusString()));
 		return cp;
 	}
 	

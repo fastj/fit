@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 
 import org.fastj.fit.intf.DataInvalidException;
 import org.fastj.fit.log.LogUtil;
+import org.fastj.fit.model.verify.ChkPara;
+import org.fastj.fit.model.verify.ChkParaFactory;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -139,7 +141,10 @@ public class JSONHelper {
 			{
 				String npath = path.replaceAll(regex1, "[" + i + "]");
 				Object o = jsonValueInner(npath, jo);
-				vl.add(o);
+				if (!"nil".equals(o) && !"null".equals(o) && null != o)
+				{
+					vl.add(o);
+				}
 			}
 			
 			switch (op) {
@@ -244,8 +249,10 @@ public class JSONHelper {
 				{
 					String[] ss = splitSelector(selectors);
 					
+					int tag = -1;
 					for (String selector : ss)
 					{
+						tag++;
 						if ("size()".equals(selector))
 						{
 							return curro == null ? 0 : curro instanceof Collection<?> ?
@@ -255,51 +262,82 @@ public class JSONHelper {
 						
 						if (curro == null)
 						{
-							break;
+							break; //end selector
 						}
-						
-						if (curro instanceof Map)
-						{
+							
+						if (curro instanceof Map && tag == 0) {
 							curro = ((Map) curro).values();
 						}
-						
-						Collection<?> ol = (Collection<?>) curro;
-						
-						if (selector.contains("="))
-						{
-							String selectVar[] = selector.split("=", 2);
-							String key = selectVar[0].trim();
-							String v = selectVar[1].trim();
 							
+							
+						String spath[] = StringUtil.readCmdParam(selector, true);
+						if (spath.length == 3 || selector.contains("=")) {
+							String selectVar[] = spath.length == 3 ? spath : selector.split("=", 2);
+							String key = selectVar[0].trim();
+							String op = selectVar.length == 2 ? "=" : selectVar[1];
+							String expv = selectVar.length == 2 ? selectVar[1].trim() : selectVar[2];
+
 							Object to = null;
-							for (Object lo : ol)
-							{
-								if (lo instanceof Map)
-								{
-									Map<String, Object> mo = (Map<String, Object>) lo;
-									if (v.equals(jsonValue(key, mo)))
-									{
-										to = mo;
-										break;
+							if (tag == 0) {
+								if (!(curro instanceof Collection)) {
+									throw new DataInvalidException("selector on none-list struct.");
+								}
+
+								Collection<?> ol = (Collection<?>) curro;
+								for (Object lo : ol) {
+									if (lo instanceof Map) {
+										Map<String, Object> mo = (Map<String, Object>) lo;
+										Object rv = jsonValue(key, mo);
+										String rvalue = rv == null || rv instanceof String ? String.valueOf(rv)
+												: JSONHelper.jsonString(rv);
+
+										ChkPara cp = ChkParaFactory.get(rvalue, op, expv);
+										cp.setRealValue(rvalue);
+										if (cp.check().isPass()) {
+											if (tag == 0)
+												to = mo; // first match
+											break;
+										} else {
+											to = null;
+										}
 									}
 								}
+							} else {
+								if (!(curro instanceof Map)) {
+									break; // break selector
+								}
+
+								Map<String, Object> mo = (Map<String, Object>) curro;
+								Object rv = jsonValue(key, mo);
+								String rvalue = rv == null || rv instanceof String ? String.valueOf(rv)
+										: JSONHelper.jsonString(rv);
+
+								ChkPara cp = ChkParaFactory.get(rvalue, op, expv);
+								cp.setRealValue(rvalue);
+								if (!cp.check().isPass()) {
+									to = null;
+								} else {
+									to = curro;
+								}
 							}
-							
 							curro = to == null ? "nil" : to;
-						}
-						else
-						{
+						} else {
+							if (!(curro instanceof Collection)) {
+								throw new DataInvalidException("selector on none-list struct.");
+							}
+
 							int idx = 0;
 							try {
 								idx = Integer.valueOf(selector.trim());
 							} catch (NumberFormatException e) {
 								curro = "nil";
-								continue;
+								break;
 							}
-							
-							curro = ol.size() > idx ? new ArrayList<>(ol).get(idx): "nil";
+							Collection<?> ol = (Collection<?>) curro;
+							curro = ol.size() > idx ? new ArrayList<>(ol).get(idx) : "nil";
 						}
-					}// FOR EACH
+
+					}// FOR EACH selector
 				}
 				else if (curro instanceof List) // selector is null
 				{

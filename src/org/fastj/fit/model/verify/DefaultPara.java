@@ -31,17 +31,20 @@ public class DefaultPara extends ChkPara{
 		//=, !=, >, >=, <, <=
 		CheckPoint cp = new CheckPoint();
 		boolean rlt = check(expValue);
-		
+		String expV = expValue;
 		boolean ff = false;
 		if ( !rlt && fastFails != null && fastFails.length > 0)
 		{
 			for (String ffStr : fastFails)
 			{
-				if (ff = check(ffStr)) break;
+				if (ff = check(ffStr)) {
+					expV = ffStr;
+					break;
+				}
 			}
 		}
 		cp.setResultCode(rlt ? Consts.PASS : ff ? Consts.FAST_FAIL : Consts.FAIL);
-		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expValue, cp.isPass() ? "PASS" : "FAIL"));
+		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expV, cp.statusString()));
 		return cp;
 	}
 	
@@ -78,6 +81,8 @@ public class DefaultPara extends ChkPara{
 	@Override
 	public ChkPara copy(String rp) {
 		DefaultPara dp = new DefaultPara(rp != null ? rp : rpath, opkey, expValue);
+		dp.fastFails = new String[fastFails.length];
+		System.arraycopy(fastFails, 0, dp.fastFails, 0, fastFails.length);
 		return dp;
 	}
 

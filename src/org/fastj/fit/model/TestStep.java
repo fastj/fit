@@ -146,7 +146,12 @@ public class TestStep{
 	}
 
 	public void setFuncCmd(String funcCmd) {
-		this.funcCmd = funcCmd;
+		if (funcCmd.startsWith("(")) {
+			int idx = funcCmd.indexOf(')');
+			setName(funcCmd.substring(1, idx).trim());
+			funcCmd = funcCmd.substring(idx + 1);
+		}
+		this.funcCmd = funcCmd.trim();
 	}
 
 	public int getDelay() {

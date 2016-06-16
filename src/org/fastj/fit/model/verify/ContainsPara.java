@@ -38,6 +38,7 @@ public class ContainsPara extends ChkPara{
 		CheckPoint cp = new CheckPoint();
 		boolean eq = this.realValue.contains(this.expValue);
 		eq = not ? !eq : eq;
+		String expV = expValue;
 		boolean ff = false;
 		if (!eq && fastFails != null && fastFails.length > 0)
 		{
@@ -45,12 +46,15 @@ public class ContainsPara extends ChkPara{
 			{
 				ff = this.realValue.contains(ffStr);
 				ff = not ? !ff : ff;
-				if (ff) break;
+				if (ff) {
+					expV = ffStr;
+					break;
+				}
 			}
 		}
 		
 		cp.setResultCode(eq ? Consts.PASS : ff ? Consts.FAST_FAIL : Consts.FAIL);
-		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expValue, cp.isPass() ? "PASS" : "FAIL"));
+		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expV, cp.statusString()));
 		return cp;
 	}
 
@@ -58,6 +62,8 @@ public class ContainsPara extends ChkPara{
 	public ChkPara copy(String rp) {
 		ContainsPara cp = new ContainsPara(rp != null ? rp : rpath, opkey, expValue);
 		cp.not = this.not;
+		cp.fastFails = new String[fastFails.length];
+		System.arraycopy(fastFails, 0, cp.fastFails, 0, fastFails.length);
 		return cp;
 	}
 

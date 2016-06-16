@@ -127,6 +127,8 @@ public final class TRun {
 					{
 						try {
 							tproj.getPostProc().finish(tc);
+							tc.getNLoggor().clear();
+							tc.getResults().clear();
 						} catch (Exception e1) {
 							LogUtil.error("Call postProc[finishTC2] fail: ", e1);
 						}
@@ -211,6 +213,8 @@ public final class TRun {
 			{
 				try {
 					tproj.getPostProc().finish(tc);
+					tc.getNLoggor().clear();
+					tc.getResults().clear();
 				} catch (Exception e) {
 					LogUtil.error("Call postProc[finishTC1] fail: ", e);
 				}
@@ -307,7 +311,7 @@ public final class TRun {
 				try {
 					tr.setEnd(System.currentTimeMillis());
 					tc.mergeResult(tr);
-					tr.setLog(nlog.getLog());
+					
 					try {
 						fillLoopData(tr, context, tc, ptable);
 					} catch (DataInvalidException | ParamIncertitudeException e) {
@@ -323,8 +327,12 @@ public final class TRun {
 					if (tc.getTid() == null || tc.getTid().indexOf("${") < 0) {
 						tc.append(nlog);
 					} 
+					else {
+						tr.setLog(nlog.getLog());
+					}
 				} finally {
 					cdl.countDown();
+					nlog.clear();
 				}
 			}
 		}//run
@@ -586,14 +594,13 @@ public final class TRun {
 		}
 		else if (fresp.getCode() != Response.OK)
 		{
-			log.error("CallFail: {}", fresp.getPhrase());
+			log.error("CallFail: code={}, err={}", fresp.getCode(), fresp.getPhrase());
 		}
 		
 		String jsonEntity = JSONHelper.jsonString(fresp.getEntity());
 		ptable.add("_resp_", jsonEntity);
-		ptable.add("_log_", ctx.getLog().getLog());
 		//For UI feature
-		ptable.getParent().getParent().add("_resp_", jsonEntity);
+//		ptable.getParent().getParent().add("_resp_", jsonEntity);
 		
 		int cost = (int) (System.currentTimeMillis() - stepStart);
 		
@@ -604,19 +611,20 @@ public final class TRun {
 		sr.setStart(stepStart);
 		sr.setCost(cost);
 		
+		if (!ptable.gcontains("logoff"))
 		if (!sr.isPass())
 		{
-			log.error("REQ: {}", fresp.getRequest());
-			log.error("RESP: \r\n{}", jsonEntity);
+			log.error("REQ: {}", ptable.gcontains("close_req") ? "Removed" : ptable.getPara("_request_", fresp.getRequest()));
+			log.error("RESP: {}", ptable.gcontains("close_resp") ? "Removed" : jsonEntity);
 		}else
 		{
-			log.info("REQ: {}", fresp.getRequest());
-			log.info("RESP: \r\n{}", jsonEntity);
+			log.info("REQ: {}", ptable.gcontains("close_req") ? "Removed" : ptable.getPara("_request_", fresp.getRequest()));
+			log.info("RESP: {}", ptable.gcontains("close_resp") ? "Removed" : jsonEntity);
 		}
 		
 		for (String msg : sr.getMessages())
 		{
-			log.info("Check: {}", msg);
+			log.trace("Check: {}", msg);
 		}
 		
 		sr.setRequest(fresp.getRequest());
@@ -644,6 +652,7 @@ public final class TRun {
 		log.trace("====== Step takes {} msec. Result ==> {}", sr.getCost(), sr.isPass() ? "PASS" : sr.isBlock() ? "BLOCK" : "FAIL");
 		NodeLogger nlog = ctx.getLog();
 		nlog.append(log);
+		log.clear();
 		return sr;
 	}
 	
@@ -662,7 +671,7 @@ public final class TRun {
 			pvalue = path;
 		}
 		
-		log.trace("Out param ===> {}@{} = {}", name, to.valueExpr, pvalue);
+		log.trace("Out param ===> {} = {}", name, pvalue);
 		
 		return new String[]{name, pvalue};
 	}

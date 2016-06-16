@@ -72,6 +72,7 @@ public class Funcs {
 	
 	static
 	{
+		//build-in functions
 		regist(new IFFunc());
 		regist(new GetDate());
 		regist(new JSonGet());
@@ -87,5 +88,9 @@ public class Funcs {
 		regist(new ForFunc());
 		regist(new SortDataFunc());
 		regist(new OutFunc());
+		regist(new FSListFunc());
+		regist(new Base64Func(Base64Func.ENCODE));
+		regist(new Base64Func(Base64Func.DECODE));
+		regist(new NewLine());
 	}
 }

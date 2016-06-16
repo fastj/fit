@@ -76,7 +76,7 @@ public class TCaseRunner {
 			return;
 		}
 		
-		LogUtil.level = tproj.getSysVars().getInt("loglevel", LogUtil.INFO);
+		LogUtil.level = argTable.getInt("loglevel", LogUtil.INFO);
 		
 		for (File rf : runfs)
 		{

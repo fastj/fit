@@ -68,7 +68,7 @@ public class TScriptRunner {
 		
 		init(tproj, filelist, argTable);
 		
-		LogUtil.level = tproj.getSysVars().getInt("loglevel", LogUtil.INFO);
+		LogUtil.level = argTable.getInt("loglevel", LogUtil.INFO);
 		
 		tproj.start();
 		int maxL = tproj.getMaxLevel();

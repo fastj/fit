@@ -39,7 +39,7 @@ public class VerifyTable {
 	
 	public VerifyTable add(String name, String op, String expValue, String[] fastfails) throws DataInvalidException
 	{
-		if (!StringUtil.isValidVar(name) || !StringUtil.isValidVar(expValue))
+		if (name == null || expValue == null)
 		{
 			throw new DataInvalidException("Verify Param name/value is null or empty!");
 		}
@@ -59,7 +59,6 @@ public class VerifyTable {
 	{
 		StepResult sr = new StepResult();
 		if (table.isEmpty()) {
-			sr.addMessage("No CheckList.");
 			return sr;
 		}
 		

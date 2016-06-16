@@ -17,7 +17,6 @@
 package org.fastj.fit.intf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.fastj.fit.log.LogUtil;
@@ -56,10 +55,10 @@ public final class ParameterTable {
 		}
 	}
 	
-	public List<Parameter> gets()
+	public Parameter[] gets()
 	{
 		synchronized (table) {
-			return Collections.synchronizedList(table);
+			return table.toArray(new Parameter[table.size()]);
 		}
 	}
 	

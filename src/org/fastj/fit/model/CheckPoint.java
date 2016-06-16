@@ -26,6 +26,17 @@ public class CheckPoint {
 	{
 		return resultCode == TCNode.PASS;
 	}
+	
+	public String statusString() {
+		switch (resultCode) {
+		case TCNode.PASS:
+			return "PASS";
+		case TCNode.FAST_FAIL:
+			return "FASTFAIL";
+		default:
+			return "FAIL";
+		}
+	}
 
 	public boolean isFastFail()
 	{

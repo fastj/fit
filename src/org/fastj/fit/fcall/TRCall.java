@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015  FastJ
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.fastj.fit.fcall;
 
 import java.util.ArrayList;
@@ -14,9 +30,14 @@ import org.fastj.fit.intf.TCNode;
 import org.fastj.fit.intf.TContext;
 import org.fastj.fit.intf.TResult;
 import org.fastj.fit.intf.TSuite;
-import org.fastj.fit.log.LogUtil;
 import org.fastj.fit.tool.StringUtil;
 
+/**
+ * Adaptor to other auto test script
+ * 
+ * @author zhouqingquan
+ *
+ */
 public class TRCall implements IFuncCall{
 
 	@Override
@@ -38,7 +59,8 @@ public class TRCall implements IFuncCall{
 		tr.getLoopData().getParent().setParent(table);
 		
 		String log = StringUtil.expendVar("log", table);
-		tr.setLog(log);
+		String plog = ctx.get("__log__");
+		tr.setLog(plog + "\r\n" + log);
 		
 		StepResult sr = new StepResult();
 		String rltExpr = StringUtil.expendVar("rlt", table);
@@ -58,8 +80,6 @@ public class TRCall implements IFuncCall{
 		closeSr.setResult(TCNode.REPLACED);
 		closeSr.addMessage(sr.getMessages().get(0));
 		ctx.getResult().mergeResult(closeSr);
-		
-		LogUtil.info(ctx.getLog().getLog());
 		
 		FuncResponse fr = new FuncResponse();
 		fr.setCode(TCNode.REPLACED);

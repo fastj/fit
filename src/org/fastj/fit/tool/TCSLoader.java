@@ -489,7 +489,7 @@ public class TCSLoader {
 				{
 					ff[i] = pars[i + 3];
 				}
-				step.getVfTable().add(pars[0].trim(), pars[1].trim(), pars[2].trim(), ff);
+				step.getVfTable().add(pars[0], pars[1], pars[2], ff);
 			}
 			else
 			{

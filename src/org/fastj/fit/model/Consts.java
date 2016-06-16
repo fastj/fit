@@ -53,7 +53,7 @@ public final class Consts {
 	public static final String VERIFY_MODE_CONTAINS = "ct"; //contains
 	public static final String VERIFY_MODE_NOT_CONTAINS = "!ct"; //contains
 	
-	public static final String STEP_FUNC_PATTERRN = "^\\$([A-Za-z0-9_]{1,})\\(([\\S\\s]*)\\)\\s*$";
+	public static final String STEP_FUNC_PATTERRN = "^\\$(\\([\\S\\s]*\\))*[ ]*([A-Za-z0-9_]{1,})\\(([\\S\\s]*)\\)\\s*$";
 	
 	public static final String FUNC_PATTERRN = "^([A-Za-z0-9_]{1,})\\(([\\S\\s]*)\\)$";
 	

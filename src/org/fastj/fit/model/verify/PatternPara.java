@@ -29,25 +29,30 @@ public class PatternPara extends ChkPara{
 	public CheckPoint check() {
 		CheckPoint cp = new CheckPoint();
 		boolean eq = this.realValue.matches(this.expValue);
-		
+		String expV = expValue;
 		boolean ff = false;
 		if (!eq && fastFails != null && fastFails.length > 0)
 		{
 			for (String ffStr : fastFails)
 			{
 				ff = this.realValue.matches(ffStr);
-				if (ff) break;
+				if (ff) {
+					expV = ffStr;
+					break;
+				}
 			}
 		}
 		
 		cp.setResultCode(eq ? Consts.PASS : ff ? Consts.FAST_FAIL : Consts.FAIL);
-		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expValue, cp.isPass() ? "PASS" : "FAIL"));
+		cp.setMessages(String.format("[%s] %s [%s] : %s", realValue, opkey, expV, cp.statusString()));
 		return cp;
 	}
 	
 	public ChkPara copy(String rp)
 	{
 		PatternPara pp = new PatternPara(rp != null ? rp : rpath, opkey, expValue);
+		pp.fastFails = new String[fastFails.length];
+		System.arraycopy(fastFails, 0, pp.fastFails, 0, fastFails.length);
 		return pp;
 	}
 	

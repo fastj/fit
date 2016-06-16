@@ -49,7 +49,6 @@ public class EFormat {
 					if (stack.startsWith("java") || stack.startsWith("sun")) continue;
 					if (stack.startsWith("org.fastj")){
 						buff.append("\tat ").append(stack).append("\n");
-						break;
 					}else
 						buff.append("\tat ").append(stack).append("\n");
 				}

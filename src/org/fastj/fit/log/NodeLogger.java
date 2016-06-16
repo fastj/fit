@@ -16,19 +16,26 @@
 
 package org.fastj.fit.log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
-
-import org.fastj.fit.tool.EFormat;
 
 public class NodeLogger {
 	
-	private StringBuilder logBuffer = new StringBuilder();
-	PrintStream consoleOut = LogUtil.nlog == null ? System.out : LogUtil.nlog.consoleOut;
+	private Object lock = new Object();
+	private ByteArrayOutputStream bout = new ByteArrayOutputStream(1024);
+	private PrintStream pstream = new PrintStream(bout);
 	
 	public String getLog()
 	{
-		synchronized (logBuffer) {
-			return logBuffer.toString();
+		synchronized (lock) {
+			return bout.toString();
+		}
+	}
+	
+	public void clear() {
+		synchronized (lock) {
+			bout = new ByteArrayOutputStream(2);
 		}
 	}
 	
@@ -36,7 +43,9 @@ public class NodeLogger {
 	{
 		if (LogUtil.debug())
 		{
-			log(LogUtil.format("DEBUG", msg, args), false);
+			synchronized (lock) {
+				LogUtil.log(pstream, "DEBUG", msg, args);
+			}
 		}
 	}
 	
@@ -44,7 +53,9 @@ public class NodeLogger {
 	{
 		if (LogUtil.info())
 		{
-			log(LogUtil.format("INFO", msg, args), false);
+			synchronized (lock) {
+				LogUtil.log(pstream, "INFO", msg, args);
+			}
 		}
 	}
 	
@@ -52,7 +63,9 @@ public class NodeLogger {
 	{
 		if (LogUtil.warn())
 		{
-			log(LogUtil.format("WARN", msg, args), true);
+			synchronized (lock) {
+				LogUtil.log(pstream, "WARNING", msg, args);
+			}
 		}
 	}
 	
@@ -60,7 +73,9 @@ public class NodeLogger {
 	{
 		if (LogUtil.trace())
 		{
-			log(LogUtil.format("TRACE", msg, args), true);
+			synchronized (lock) {
+				LogUtil.log(pstream, "TRACE", msg, args);
+			}
 		}
 	}
 	
@@ -68,7 +83,9 @@ public class NodeLogger {
 	{
 		if (LogUtil.error())
 		{
-			log(LogUtil.format("ERROR", msg, args), true);
+			synchronized (lock) {
+				LogUtil.log(pstream, "ERROR", msg, args);
+			}
 		}
 	}
 	
@@ -76,29 +93,27 @@ public class NodeLogger {
 	{
 		if (LogUtil.error())
 		{
-			log(LogUtil.format("ERROR", msg, args) + "\r\n    " + EFormat.exStrEx(t, true), true);
+			synchronized (lock) {
+				LogUtil.log(pstream, "ERROR", msg, args);
+				t.printStackTrace(pstream);
+			}
 		}
 	}
 	
 	public void append(String msg)
 	{
-		synchronized (logBuffer) {
-			logBuffer.append(msg).append("\r\n");
+		synchronized (lock) {
+			pstream.println(msg);
 		}
 	}
 	
 	public void append(NodeLogger nlog)
 	{
-		synchronized (logBuffer) {
-			logBuffer.append(nlog.logBuffer).append("\r\n");
+		synchronized (lock) {
+			try {
+				nlog.bout.writeTo(bout);
+			} catch (IOException e) {
+			}
 		}
-	}
-	
-	private void log(String msg, boolean console)
-	{
-		synchronized (logBuffer) {
-			logBuffer.append(msg).append("\r\n");
-		}
-		if (console && consoleOut != null) consoleOut.println(msg);
 	}
 }

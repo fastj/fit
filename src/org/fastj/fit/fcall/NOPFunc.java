@@ -24,6 +24,7 @@ import org.fastj.fit.intf.IFuncCall;
 import org.fastj.fit.intf.ParamIncertitudeException;
 import org.fastj.fit.intf.ParameterTable;
 import org.fastj.fit.intf.TContext;
+import org.fastj.fit.tool.StringUtil;
 
 /**
  * @command $nop()
@@ -43,7 +44,7 @@ public class NOPFunc implements IFuncCall{
 		FuncResponse fr = new FuncResponse();
 		fr.setCode(0);
 		fr.setEntity(new HashMap<String, Object>());
-		fr.setRequest("NOP: " + argStr);
+		fr.setRequest("NOP: " + StringUtil.expend(argStr, table));
 		fr.setPhrase("");
 		return fr;
 	}

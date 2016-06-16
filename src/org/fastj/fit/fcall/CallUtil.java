@@ -118,6 +118,9 @@ public class CallUtil {
 		regist(new DBFunc());
 		regist(new NOPFunc());
 		regist(new TRCall());
+		regist(new TRSetLogCall());
+		regist(new Delay());
+		regist(new EchoCall());
 	}
 	
 }
