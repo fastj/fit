@@ -86,7 +86,7 @@ public class VerifyTable {
 				if (path.contains("[loop()]"))
 				{
 					String rpath = path;
-					if (v == null || "nil".equals(v) || !(v instanceof List<?>))
+					if (v == null || "nil".equals(v) || !(v instanceof List<?>) || ((List<?>) v).isEmpty())
 					{
 						cp.setRealValue("nil");
 					}
@@ -104,7 +104,7 @@ public class VerifyTable {
 				}
 				else if (path.contains("[find()]"))
 				{
-					if (v == null || "nil".equals(v) || !(v instanceof List<?>))
+					if (v == null || "nil".equals(v) || !(v instanceof List<?>) || ((List<?>) v).isEmpty())
 					{
 						cp.setRealValue("nil");
 					}else{

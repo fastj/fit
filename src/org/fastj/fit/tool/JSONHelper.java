@@ -271,11 +271,8 @@ public class JSONHelper {
 							
 							
 						String spath[] = StringUtil.readCmdParam(selector, true);
-						if (spath.length == 3 || selector.contains("=")) {
-							String selectVar[] = spath.length == 3 ? spath : selector.split("=", 2);
-							String key = selectVar[0].trim();
-							String op = selectVar.length == 2 ? "=" : selectVar[1];
-							String expv = selectVar.length == 2 ? selectVar[1].trim() : selectVar[2];
+						if (spath.length >= 3 || selector.contains("=")) {
+							String selectVar[] = spath.length >= 3 ? spath : selector.split("=", 2);
 
 							Object to = null;
 							if (tag == 0) {
@@ -287,13 +284,7 @@ public class JSONHelper {
 								for (Object lo : ol) {
 									if (lo instanceof Map) {
 										Map<String, Object> mo = (Map<String, Object>) lo;
-										Object rv = jsonValue(key, mo);
-										String rvalue = rv == null || rv instanceof String ? String.valueOf(rv)
-												: JSONHelper.jsonString(rv);
-
-										ChkPara cp = ChkParaFactory.get(rvalue, op, expv);
-										cp.setRealValue(rvalue);
-										if (cp.check().isPass()) {
+										if (selectorChk(selectVar, mo)) {
 											if (tag == 0)
 												to = mo; // first match
 											break;
@@ -308,13 +299,7 @@ public class JSONHelper {
 								}
 
 								Map<String, Object> mo = (Map<String, Object>) curro;
-								Object rv = jsonValue(key, mo);
-								String rvalue = rv == null || rv instanceof String ? String.valueOf(rv)
-										: JSONHelper.jsonString(rv);
-
-								ChkPara cp = ChkParaFactory.get(rvalue, op, expv);
-								cp.setRealValue(rvalue);
-								if (!cp.check().isPass()) {
+								if (!selectorChk(selectVar, mo)) {
 									to = null;
 								} else {
 									to = curro;
@@ -366,6 +351,34 @@ public class JSONHelper {
 		}
 		
 		return curro;
+	}
+	
+	public static boolean selectorChk(String selectVar[], Map<String, Object> mo) throws DataInvalidException {
+		
+		if (selectVar.length == 2) {
+			String[] ovar = selectVar;
+			selectVar = new String[3];
+			selectVar[0] = ovar[0].trim();
+			selectVar[1] = "=";
+			selectVar[2] = ovar[1].trim();
+		}
+		
+		for (int i = 0; (i + 2) < selectVar.length; i += 4) {
+			String key = selectVar[i];
+			String op = selectVar[i + 1];
+			String expv = selectVar[i + 2];
+			
+			Object rv = jsonValue(key, mo);
+			String rvalue = rv == null || rv instanceof String ? String.valueOf(rv) : JSONHelper.jsonString(rv);
+
+			ChkPara cp = ChkParaFactory.get(rvalue, op, expv);
+			cp.setRealValue(rvalue);
+			if (cp.check().isPass()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	
